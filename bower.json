@@ -1,0 +1,22 @@
+{
+  "name": "imapHandler",
+  "main": "imapHandler.js",
+  "version": "0.1.0",
+  "homepage": "https://github.com/Kreata/imapHandler",
+  "authors": [
+    "Andris Reinman <andris@kreata.ee>"
+  ],
+  "description": "Parse and compile IMAP commands",
+  "keywords": [
+    "IMAP",
+    "parser"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
