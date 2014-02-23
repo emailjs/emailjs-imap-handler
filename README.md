@@ -21,17 +21,11 @@ Require *bower_components/imapHandler/imapHandler.js* as an AMD module or includ
 
 To parse a command you need to have the command as one complete string (including all literals) without the ending &lt;CR&gt;&lt;LF&gt;
 
-    imapHandler.parser(imapCommand[, options]);
+    imapHandler.parser(imapCommand);
 
 Where
 
   * **imapCommand** is an IMAP string without the final line break
-  * **options** is an optional options object (see below)
-
-Options
-
-  * **allowUntagged** (Boolean) by default parsing "*" tags are not allowed, set this value to true to accept untagged commands. If you're building a client, you most certainly want to set it to true.
-  * **allowSection** (Array) Not all atoms are allowed to have section (and partial) values, set the command names with this array (default value is `["BODY", "BODY.PEEK"]`)
 
 The function returns an object in the following form:
 

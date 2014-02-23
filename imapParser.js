@@ -15,8 +15,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+/* jshint browser: true */
+/* global define: false, imapFormalSyntax: false */
+
 // AMD shim
 (function(root, factory) {
+
+    "use strict";
+
     if (typeof define === "function" && define.amd) {
         define(["./imapFormalSyntax"], factory);
     } else {
@@ -35,15 +41,36 @@
 
     ParserInstance.prototype.getTag = function(){
         if(!this.tag){
-            this.tag = this.getElement(imapFormalSyntax.tag() + (this.options.allowUntagged ? "*" : ""), true);
+            this.tag = this.getElement(imapFormalSyntax.tag() + "*", true);
         }
         return this.tag;
     };
 
     ParserInstance.prototype.getCommand = function(){
+        var responseCode;
+
         if(!this.command){
             this.command = this.getElement(imapFormalSyntax.command());
         }
+
+        switch((this.command || "").toString().toUpperCase()){
+            case "OK":
+            case "NO":
+            case "BAD":
+            case "PREAUTH":
+            case "BYE":
+                responseCode = this.remainder.match(/^ \[[^\]]*\]/);
+                if(responseCode){
+                    this.humanReadable = this.remainder.substr(responseCode[0].length).trim();
+                    this.remainder = responseCode[0];
+                }
+                else{
+                    this.humanReadable = this.remainder.trim();
+                    this.remainder = "";
+                }
+                break;
+        }
+
         return this.command;
     };
 
@@ -91,12 +118,13 @@
             throw new Error("Unexpected whitespace at position " + this.pos);
         }
 
-        return new TokenParser(this.pos, this.remainder, this.options).getAttributes();
+        return new TokenParser(this, this.pos, this.remainder, this.options).getAttributes();
     };
 
-    function TokenParser(startPos, str, options){
+    function TokenParser(parent, startPos, str, options){
         this.str = (str || "").toString();
         this.options = options || {};
+        this.parent = parent;
 
         this.tree = this.currentNode = this.createNode();
         this.pos = startPos || 0;
@@ -304,6 +332,21 @@
                         case " ":
                             throw new Error("Unexpected whitespace at position " + (this.pos+i));
 
+                        // [ starts section
+                        case "[":
+                            if(["OK", "NO", "BAD", "BYE", "PREAUTH"].indexOf(this.parent.command.toUpperCase()) >= 0){
+                                this.currentNode.endPos = this.pos + i;
+
+                                this.currentNode = this.createNode(this.currentNode, this.pos + i);
+                                this.currentNode.type = "ATOM";
+
+                                this.currentNode = this.createNode(this.currentNode, this.pos + i);
+                                this.currentNode.type = "SECTION";
+                                this.currentNode.closed = false;
+                                this.state = "NORMAL";
+                                break;
+                            }
+
                         // Any ATOM supported char starts a new Atom sequence, otherwise throw an error
                         default:
                             // Allow \ as the first char for atom to support system flags
@@ -361,8 +404,8 @@
 
                     // [ starts a section group for this element
                     if(chr=="["){
-                        // allowed only for slelected elements
-                        if(this.options.allowSection.indexOf(this.currentNode.value.toUpperCase()) < 0){
+                        // allowed only for selected elements
+                        if(["BODY", "BODY.PEEK"].indexOf(this.currentNode.value.toUpperCase()) < 0){
                             throw new Error("Unexpected section start char [ at position " + this.pos);
                         }
                         this.currentNode.endPos = this.pos + i;
@@ -539,9 +582,6 @@
         var parser, response = {};
 
         options = options || {};
-        options.allowSection = options.allowSection || ["BODY", "BODY.PEEK"];
-        options.multiWords = options.multiWords || ["UID", "AUTHENTICATE"];
-        options.allowUntagged = !!options.allowUntagged;
 
         parser = new ParserInstance(command, options);
 
@@ -549,7 +589,7 @@
         parser.getSpace();
         response.command = parser.getCommand();
 
-        if(options.multiWords.indexOf((response.command || "").toUpperCase()) >= 0){
+        if(["UID", "AUTHENTICATE"].indexOf((response.command || "").toUpperCase()) >= 0){
             parser.getSpace();
             response.command += " " + parser.getElement(imapFormalSyntax.command());
         }
@@ -557,6 +597,10 @@
         if(parser.remainder.length){
             parser.getSpace();
             response.attributes = parser.getAttributes();
+        }
+
+        if(parser.humanReadable){
+            response.attributes = (response.attributes || []).concat({type:"TEXT", value: parser.humanReadable});
         }
 
         return response;

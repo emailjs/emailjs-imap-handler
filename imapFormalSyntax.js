@@ -15,6 +15,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+/* jshint browser: true */
+/* global define: false */
+
 // AMD shim
 (function(root, factory) {
 

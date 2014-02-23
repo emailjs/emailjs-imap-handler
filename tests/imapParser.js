@@ -25,24 +25,25 @@ test("Get tag fail (unexpected WS)", function() {
     }
 });
 
-test("Get tag fail (untagged npt allowed)", function() {
+test("* OK ", function() {
     "use strict";
 
     expect(1);
     try{
-        imapHandler.parser("* CMD");
+        imapHandler.parser(" TAG CMD");
         ok(false);
     }catch(E){
         ok(E);
     }
 });
 
+
 test("Get tag fsuccess (allow untagged)", function() {
     "use strict";
 
     expect(1);
     try{
-        imapHandler.parser("* CMD", {allowUntagged: true});
+        imapHandler.parser("* CMD");
         ok(true);
     }catch(E){
         ok(!E);
@@ -312,6 +313,7 @@ test("ATOM Section", function() {
         deepEqual(imapHandler.parser("TAG1 CMD BODY[(KERE)]").attributes, [{type:"ATOM", value:"BODY", section: [[{type: "ATOM", value:"KERE"}]]}]);
         ok(true);
     }catch(E){
+        alert(E.message)
         ok(!E);
     }
 
@@ -322,9 +324,67 @@ test("ATOM Section", function() {
     }catch(E){
         ok(E);
     }
+});
 
-    // Allow KODY to have sections
-    deepEqual(imapHandler.parser("TAG1 CMD KoDY[]", {allowSection: ["KODY"]}).attributes, [{type:"ATOM", value:"KoDY", section: []}]);
+test("Human readable", function() {
+    "use strict";
+
+    try{
+        deepEqual(imapHandler.parser("* OK [CAPABILITY IDLE] Hello world!"),
+            {
+                command: "OK",
+                tag: "*",
+                attributes: [
+                    {
+                        section: [
+                            {
+                                type: "ATOM",
+                                value: "CAPABILITY"
+                            },
+                            {
+                                type: "ATOM",
+                                value: "IDLE"
+                            }
+                        ],
+                        type: "ATOM",
+                        value: ""
+                    },
+                    {
+                        type: "TEXT",
+                        value: "Hello world!"
+                    }
+                ]
+            });
+        ok(true);
+    }catch(E){
+        alert(E.message)
+        ok(!E);
+    }
+
+    try{
+        deepEqual(imapHandler.parser("* OK Hello world!"),
+            {
+                command: "OK",
+                tag: "*",
+                attributes: [{type: "TEXT", value: "Hello world!"}]
+            });
+        ok(true);
+    }catch(E){
+        alert(E.message)
+        ok(!E);
+    }
+
+    try{
+        deepEqual(imapHandler.parser("* OK"),
+            {
+                command: "OK",
+                tag: "*"
+            });
+        ok(true);
+    }catch(E){
+        alert(E.message)
+        ok(!E);
+    }
 });
 
 test("ATOM Partial", function() {
