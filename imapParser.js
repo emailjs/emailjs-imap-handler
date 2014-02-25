@@ -239,7 +239,8 @@
                             throw new Error("Unexpected whitespace at position " + (this.pos + i + 1));
                         }
                     }else if([")", "<", "]"].indexOf(this.str.charAt(i + 1)) < 0){
-                        throw new Error("Unexpected char at position " + (this.pos + i + 1));
+                        // Commented out to relaxe the parser - some hosts send `)(` instead of `) (`
+                        // throw new Error("Unexpected char at position " + (this.pos + i + 1));
                     }
                 }
             }).bind(this);

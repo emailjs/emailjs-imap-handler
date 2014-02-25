@@ -242,6 +242,7 @@ test("LIST", function() {
     try{
         deepEqual(imapHandler.parser("TAG1 CMD (1234)").attributes, [[{type:"ATOM", value: "1234"}]]);
         deepEqual(imapHandler.parser("TAG1 CMD (1234 TERE)").attributes, [[{type:"ATOM", value: "1234"}, {type:"ATOM", value: "TERE"}]]);
+        deepEqual(imapHandler.parser("TAG1 CMD (1234)(TERE)").attributes, [[{type:"ATOM", value: "1234"}], [{type:"ATOM", value: "TERE"}]]);
         ok(true);
     }catch(E){
         ok(!E);
@@ -296,13 +297,6 @@ test("LITERAL", function() {
         ok(true);
     }catch(E){
         ok(!E);
-    }
-
-    try{
-        imapHandler.parser("TAG1 CMD {4}\r\nabcd{4}\r\nkere");
-        ok(false);
-    }catch(E){
-        ok(E);
     }
 
     try{
