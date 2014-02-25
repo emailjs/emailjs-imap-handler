@@ -228,29 +228,15 @@
     TokenParser.prototype.processString = function(){
         var chr, i, len,
             checkSP = (function(){
-                if(i < len - 1){
-                    if(this.str.charAt(i + 1) == " "){
-                        if(i + 1 == len - 1){
-                            throw new Error("Unexpected whitespace at position " + (this.pos + i +1));
-                        }
-                        if(this.str.charAt(i + 2) != ")"){
-                            i++;
-                        }else{
-                            throw new Error("Unexpected whitespace at position " + (this.pos + i + 1));
-                        }
-                    }else if([")", "<", "]"].indexOf(this.str.charAt(i + 1)) < 0){
-                        // Commented out to relaxe the parser - some hosts send `)(` instead of `) (`
-                        // throw new Error("Unexpected char at position " + (this.pos + i + 1));
-                    }
+                // jump to the next non whitespace pos
+                while(this.str.charAt(i + 1) == " "){
+                    i++;
                 }
             }).bind(this);
 
         for(i = 0, len = this.str.length; i < len; i++){
-            chr = this.str.charAt(i);
 
-            if(chr == " " && i >= this.str.length - 1){
-                throw new Error("Unexpected whitespace at position " + this.pos + i);
-            }
+            chr = this.str.charAt(i);
 
             switch(this.state){
 
@@ -331,7 +317,8 @@
 
                         // normally a space should never occur
                         case " ":
-                            throw new Error("Unexpected whitespace at position " + (this.pos+i));
+                            // just ignore
+                            break;
 
                         // [ starts section
                         case "[":

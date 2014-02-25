@@ -157,28 +157,6 @@ test("Get attribute success", function() {
     }
 });
 
-test("Get attribute fail (invalid whitespace at end)", function() {
-    "use strict";
-
-    try{
-        imapHandler.parser("TAG1 CMD FED ");
-        ok(false);
-    }catch(E){
-        ok(E);
-    }
-});
-
-test("Get attribute fail (invalid whitespace between value)", function() {
-    "use strict";
-
-    try{
-        imapHandler.parser("TAG1 CMD FED  TED");
-        ok(false);
-    }catch(E){
-        ok(E);
-    }
-});
-
 test("Get attribute success (single whitespace between values)", function() {
     "use strict";
 
@@ -243,26 +221,14 @@ test("LIST", function() {
         deepEqual(imapHandler.parser("TAG1 CMD (1234)").attributes, [[{type:"ATOM", value: "1234"}]]);
         deepEqual(imapHandler.parser("TAG1 CMD (1234 TERE)").attributes, [[{type:"ATOM", value: "1234"}, {type:"ATOM", value: "TERE"}]]);
         deepEqual(imapHandler.parser("TAG1 CMD (1234)(TERE)").attributes, [[{type:"ATOM", value: "1234"}], [{type:"ATOM", value: "TERE"}]]);
+        deepEqual(imapHandler.parser("TAG1 CMD ( 1234)").attributes, [[{type:"ATOM", value: "1234"}]]);
+        deepEqual(imapHandler.parser("TAG1 CMD (1234) ").attributes, [[{type:"ATOM", value: "1234"}]]);
         ok(true);
     }catch(E){
         ok(!E);
     }
     try{
         imapHandler.parser("TAG1 CMD (1234 )");
-        ok(false);
-    }catch(E){
-        ok(E);
-    }
-
-    try{
-        imapHandler.parser("TAG1 CMD ( 1234)");
-        ok(false);
-    }catch(E){
-        ok(E);
-    }
-
-    try{
-        imapHandler.parser("TAG1 CMD (1234) ");
         ok(false);
     }catch(E){
         ok(E);
@@ -274,17 +240,12 @@ test("Nested LIST", function() {
 
     try{
         deepEqual(imapHandler.parser("TAG1 CMD (((TERE)) VANA)").attributes, [[[[{type: "ATOM", value: "TERE"}]], {type: "ATOM", value: "VANA"}]]);
+        deepEqual(imapHandler.parser("TAG1 CMD (( (TERE)) VANA)").attributes, [[[[{type: "ATOM", value: "TERE"}]], {type: "ATOM", value: "VANA"}]]);
         ok(true);
     }catch(E){
         ok(!E);
     }
 
-    try{
-        imapHandler.parser("TAG1 CMD (( (TERE)) VANA)");
-        ok(false);
-    }catch(E){
-        ok(E);
-    }
 });
 
 test("LITERAL", function() {
