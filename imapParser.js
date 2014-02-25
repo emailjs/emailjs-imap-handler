@@ -420,8 +420,10 @@
                         throw new Error("Unexpected start of partial at position " + this.pos);
                     }
 
-                    // if the char is not ATOM compatible, throw
-                    if(imapFormalSyntax["ATOM-CHAR"]().indexOf(chr) < 0 && chr != "]"){
+                    // if the char is not ATOM compatible, throw. Allow \* as an exception
+                    if(imapFormalSyntax["ATOM-CHAR"]().indexOf(chr) < 0 && chr != "]" && !(chr == "*" && this.currentNode.value == "\\")){
+                        throw new Error("Unexpected char at position " + (this.pos+i));
+                    }else if(this.currentNode.value == "\\*"){
                         throw new Error("Unexpected char at position " + (this.pos+i));
                     }
 

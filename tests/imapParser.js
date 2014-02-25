@@ -200,6 +200,7 @@ test("ATOM", function() {
         deepEqual(imapHandler.parser("TAG1 CMD ABCDE").attributes, [{type:"ATOM", value:"ABCDE"}]);
         deepEqual(imapHandler.parser("TAG1 CMD ABCDE DEFGH").attributes, [{type:"ATOM", value:"ABCDE"}, {type:"ATOM", value:"DEFGH"}]);
         deepEqual(imapHandler.parser("TAG1 CMD %").attributes, [{type:"ATOM", value:"%"}]);
+        deepEqual(imapHandler.parser("TAG1 CMD \\*").attributes, [{type:"ATOM", value:"\\*"}]);
         deepEqual(
             imapHandler.parser("12.82 STATUS [Gmail].Trash (UIDNEXT UNSEEN HIGHESTMODSEQ)").attributes,
             [
@@ -213,6 +214,13 @@ test("ATOM", function() {
         ok(true);
     }catch(E){
         ok(!E);
+    }
+
+    try{
+        imapHandler.parser("TAG1 CMD \\*a");
+        ok(false);
+    }catch(E){
+        ok(E);
     }
 });
 
@@ -313,7 +321,6 @@ test("ATOM Section", function() {
         deepEqual(imapHandler.parser("TAG1 CMD BODY[(KERE)]").attributes, [{type:"ATOM", value:"BODY", section: [[{type: "ATOM", value:"KERE"}]]}]);
         ok(true);
     }catch(E){
-        alert(E.message)
         ok(!E);
     }
 
@@ -357,7 +364,6 @@ test("Human readable", function() {
             });
         ok(true);
     }catch(E){
-        alert(E.message)
         ok(!E);
     }
 
@@ -370,7 +376,6 @@ test("Human readable", function() {
             });
         ok(true);
     }catch(E){
-        alert(E.message)
         ok(!E);
     }
 
@@ -382,7 +387,6 @@ test("Human readable", function() {
             });
         ok(true);
     }catch(E){
-        alert(E.message)
         ok(!E);
     }
 });
