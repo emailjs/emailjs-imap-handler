@@ -35,8 +35,9 @@
     /**
      * Compiles an input object into
      */
-    return function(response){
-        var resp = response.tag + (response.command ? " " + response.command : ""),
+    return function(response, asArray){
+        var respParts = [],
+            resp = response.tag + (response.command ? " " + response.command : ""),
             val, lastType,
             walk = function(node){
 
@@ -73,8 +74,10 @@
                         if(!node.value){
                             resp += "{0}\r\n";
                         }else{
-                            resp += "{" + node.value.length + "}\r\n" + node.value;
+                            resp += "{" + node.value.length + "}\r\n";
                         }
+                        respParts.push(resp);
+                        resp = node.value || "";
                         break;
 
                     case "STRING":
@@ -115,6 +118,10 @@
 
         [].concat(response.attributes || []).forEach(walk);
 
-        return resp;
+        if(resp.length){
+            respParts.push(resp);
+        }
+
+        return asArray ? respParts : respParts.join("");
     };
 }));

@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global define: false, test: false, equal: false */
+/* global define: false, test: false, equal: false, deepEqual: false */
 
 define(['../imapHandler.js'], function(imapHandler){
 
@@ -125,4 +125,48 @@ define(['../imapHandler.js'], function(imapHandler){
         equal("* 1 EXPUNGE", compiled);
     });
 
+    module("Literal");
+
+    test("Return as text", function(){
+        var parsed = {
+            tag: "*",
+            command: "CMD",
+            attributes: [
+                {type: "LITERAL", value: "Tere tere!"},
+                "Vana kere"
+            ]
+        };
+        var compiled = imapHandler.compiler(parsed);
+
+        equal("* CMD {10}\r\nTere tere! \"Vana kere\"", compiled);
+    });
+
+    test("Return as an array text 1", function(){
+        var parsed = {
+            tag: "*",
+            command: "CMD",
+            attributes: [
+                {type: "LITERAL", value: "Tere tere!"},
+                {type: "LITERAL", value: "Vana kere"}
+            ]
+        };
+        var compiled = imapHandler.compiler(parsed, true);
+
+        deepEqual(["* CMD {10}\r\n", "Tere tere! {9}\r\n", "Vana kere"], compiled);
+    });
+
+    test("Return as an array text 2", function(){
+        var parsed = {
+            tag: "*",
+            command: "CMD",
+            attributes: [
+                {type: "LITERAL", value: "Tere tere!"},
+                {type: "LITERAL", value: "Vana kere"},
+                "zzz"
+            ]
+        };
+        var compiled = imapHandler.compiler(parsed, true);
+
+        deepEqual(["* CMD {10}\r\n", "Tere tere! {9}\r\n", "Vana kere \"zzz\""], compiled);
+    });
 });

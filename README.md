@@ -111,13 +111,14 @@ Results in the following value:
 
 You can "compile" parsed or self generated IMAP command obejcts to IMAP command strings with
 
-    imapHandler.compiler(commandObject);
+    imapHandler.compiler(commandObject, asArray);
 
 Where
 
   * **commandObject** is an object parsed with `imapHandler.parser()` or self generated
+  * **asArray** if set to `true` return the value as an array instead of a string where the command is split on LITERAL notions
 
-The function returns a string.
+The function returns a string or if `asArray` is set to true, as an array which is split on LITERAL notions, eg. "{4}\r\nabcde" becomes ["{4}\r\n", "abcde"]. This is useful if you need to wait for "+" response from the server before you can transmit the literal data.
 
 The input object differs from the parsed object with the following aspects:
 
