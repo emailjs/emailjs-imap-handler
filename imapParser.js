@@ -41,7 +41,7 @@
 
     ParserInstance.prototype.getTag = function(){
         if(!this.tag){
-            this.tag = this.getElement(imapFormalSyntax.tag() + "*", true);
+            this.tag = this.getElement(imapFormalSyntax.tag() + "*+", true);
         }
         return this.tag;
     };

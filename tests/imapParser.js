@@ -35,6 +35,14 @@ define(['../imapHandler.js'], function(imapHandler){
         }
     });
 
+    test("+ OK ", function() {
+        expect(1);
+        try{
+            equal(imapHandler.parser("+ TAG CMD").tag, "+");
+        }catch(E){
+            ok(false);
+        }
+    });
 
     test("Get tag fsuccess (allow untagged)", function() {
         expect(1);
@@ -69,7 +77,7 @@ define(['../imapHandler.js'], function(imapHandler){
     test("Get tag fail (invalid char)", function() {
         expect(1);
         try{
-            imapHandler.parser("TAG+1 CMD");
+            imapHandler.parser("TAG\"1 CMD");
             ok(false);
         }catch(E){
             ok(E);
