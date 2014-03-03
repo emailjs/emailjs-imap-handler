@@ -169,4 +169,16 @@ define(['../imapHandler.js'], function(imapHandler){
 
         deepEqual(["* CMD {10}\r\n", "Tere tere! {9}\r\n", "Vana kere \"zzz\""], compiled);
     });
+
+    test("No tag and command", function(){
+        var parsed = {
+            attributes: [
+                {type: "LITERAL", value: "Tere tere!"},
+                {type: "LITERAL", value: "Vana kere"}
+            ]
+        };
+        var compiled = imapHandler.compiler(parsed, true);
+
+        deepEqual(["{10}\r\n", "Tere tere! {9}\r\n", "Vana kere"], compiled);
+    });
 });

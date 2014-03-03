@@ -37,11 +37,11 @@
      */
     return function(response, asArray){
         var respParts = [],
-            resp = response.tag + (response.command ? " " + response.command : ""),
+            resp = (response.tag || "") + (response.command ? " " + response.command : ""),
             val, lastType,
             walk = function(node){
 
-                if(lastType == "LITERAL" || ["(", "<", "["].indexOf(resp.substr(-1)) < 0){
+                if(lastType == "LITERAL" || (["(", "<", "["].indexOf(resp.substr(-1)) < 0 && resp.length)){
                     resp += " ";
                 }
 
