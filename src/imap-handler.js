@@ -18,13 +18,14 @@
 /* jshint browser: true */
 /* global define: false, imapParser: false, imapCompiler: false */
 
-// AMD shim
+// UMD shim, see: https://github.com/umdjs/umd/blob/master/returnExports.js
 (function(root, factory) {
-
     "use strict";
 
     if (typeof define === "function" && define.amd) {
-        define(["./imapParser", "./imapCompiler"], factory);
+        define(["./imap-parser", "./imap-compiler"], factory);
+    } else if (typeof exports === 'object') {
+        module.exports = factory(require("./imap-parser"), require("./imap-compiler"));
     } else {
         root.imapHandler = factory(imapParser, imapCompiler);
     }
