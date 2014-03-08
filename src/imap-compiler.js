@@ -15,18 +15,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-/* jshint browser: true */
-/* global define: false, imapFormalSyntax: false */
-
-// AMD shim
 (function(root, factory) {
-
     "use strict";
 
+    // UMD shim, see: https://github.com/umdjs/umd/blob/master/returnExports.js
     if (typeof define === "function" && define.amd) {
-        define(["./imapFormalSyntax"], factory);
+        define(["imap-formal-syntax"], factory); // amd
+    } else if (typeof exports === "object") {
+        module.exports = factory(require("./imap-formal-syntax")); // common js
     } else {
-        root.imapCompiler = factory(imapFormalSyntax);
+        root.imapCompiler = factory(); // global
     }
 }(this, function(imapFormalSyntax) {
 
@@ -35,17 +33,17 @@
     /**
      * Compiles an input object into
      */
-    return function(response, asArray){
+    return function(response, asArray) {
         var respParts = [],
             resp = (response.tag || "") + (response.command ? " " + response.command : ""),
             val, lastType,
-            walk = function(node){
+            walk = function(node) {
 
-                if(lastType == "LITERAL" || (["(", "<", "["].indexOf(resp.substr(-1)) < 0 && resp.length)){
+                if (lastType === "LITERAL" || (["(", "<", "["].indexOf(resp.substr(-1)) < 0 && resp.length)) {
                     resp += " ";
                 }
 
-                if(Array.isArray(node)){
+                if (Array.isArray(node)) {
                     lastType = "LIST";
                     resp += "(";
                     node.forEach(walk);
@@ -53,27 +51,27 @@
                     return;
                 }
 
-                if(!node && typeof node != "string" && typeof node != "number"){
+                if (!node && typeof node !== "string" && typeof node !== "number") {
                     resp += "NIL";
                     return;
                 }
 
-                if(typeof node == "string"){
+                if (typeof node === "string") {
                     resp += JSON.stringify(node);
                     return;
                 }
 
-                if(typeof node == "number"){
+                if (typeof node === "number") {
                     resp += Math.round(node) || 0; // Only integers allowed
                     return;
                 }
 
                 lastType = node.type;
-                switch(node.type.toUpperCase()){
+                switch (node.type.toUpperCase()) {
                     case "LITERAL":
-                        if(!node.value){
+                        if (!node.value) {
                             resp += "{0}\r\n";
-                        }else{
+                        } else {
                             resp += "{" + node.value.length + "}\r\n";
                         }
                         respParts.push(resp);
@@ -97,19 +95,19 @@
                     case "SECTION":
                         val = node.value || "";
 
-                        if(imapFormalSyntax.verify(val.charAt(0) == "\\" ? val.substr(1) : val, imapFormalSyntax["ATOM-CHAR"]()) >= 0){
+                        if (imapFormalSyntax.verify(val.charAt(0) === "\\" ? val.substr(1) : val, imapFormalSyntax["ATOM-CHAR"]()) >= 0) {
                             val = JSON.stringify(val);
                         }
 
                         resp += val;
 
-                        if(node.section){
-                            resp+="[";
+                        if (node.section) {
+                            resp += "[";
                             node.section.forEach(walk);
-                            resp+="]";
+                            resp += "]";
                         }
-                        if(node.partial){
-                            resp+="<" + node.partial.join(".") + ">";
+                        if (node.partial) {
+                            resp += "<" + node.partial.join(".") + ">";
                         }
                         break;
                 }
@@ -118,7 +116,7 @@
 
         [].concat(response.attributes || []).forEach(walk);
 
-        if(resp.length){
+        if (resp.length) {
             respParts.push(resp);
         }
 

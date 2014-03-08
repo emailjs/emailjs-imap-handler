@@ -1,6 +1,6 @@
 {
   "name": "imapHandler",
-  "main": "imapHandler.js",
+  "main": "src/imap-handler.js",
   "version": "0.1.7",
   "homepage": "https://github.com/Kreata/imapHandler",
   "authors": [

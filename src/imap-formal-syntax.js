@@ -15,18 +15,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-/* jshint browser: true */
-/* global define: false */
-
-// AMD shim
 (function(root, factory) {
-
     "use strict";
 
+    // UMD shim, see: https://github.com/umdjs/umd/blob/master/returnExports.js
     if (typeof define === "function" && define.amd) {
-        define(factory);
+        define(factory);                    // amd
+    } else if (typeof exports === "object") {
+        module.exports = factory();         // common js
     } else {
-        root.imapFormalSyntax = factory();
+        root.imapFormalSyntax = factory();  // global
     }
 }(this, function() {
 
