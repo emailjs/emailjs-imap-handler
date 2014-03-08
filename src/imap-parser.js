@@ -332,10 +332,15 @@
                                 this.currentNode.type = "SECTION";
                                 this.currentNode.closed = false;
                                 this.state = "NORMAL";
-                                break;
+                            }else{
+                                this.currentNode = this.createNode(this.currentNode, this.pos + i);
+                                this.currentNode.type = "ATOM";
+                                this.currentNode.value = chr;
+                                this.state = "ATOM";
                             }
+                            break;
 
-                            // Any ATOM supported char starts a new Atom sequence, otherwise throw an error
+                        // Any ATOM supported char starts a new Atom sequence, otherwise throw an error
                         default:
                             // Allow \ as the first char for atom to support system flags
                             // Allow % to support LIST "" %
