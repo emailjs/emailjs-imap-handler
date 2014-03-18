@@ -1,19 +1,18 @@
 # IMAP Handler
 
-Parses and compiles IMAP commands.
+UMD module that parses and compiles IMAP commands.
+
+[![Build Status](https://travis-ci.org/whiteout-io/imap-handler.png?branch=master)](https://travis-ci.org/whiteout-io/imap-handler)
 
 ## Install
 
-Install with [bower](http://bower.io)
+### [Bower](http://bower.io/):
 
-    bower install imapHandler
+    bower install git@github.com:whiteout-io/imap-handler.git#0.1.8
 
-Require *bower_components/imapHandler/imapHandler.js* as an AMD module or include the following files in your page:
+### [npm](https://www.npmjs.org/):
 
-  * *bower_components/imapHandler/imapFormalSyntax.js*
-  * *bower_components/imapHandler/imapParser.js*
-  * *bower_components/imapHandler/imapCompiler.js*
-  * *bower_components/imapHandler/imapHandler.js*
+    npm install https://github.com/whiteout-io/imap-handler/tarball/0.1.8
 
 ## Usage
 

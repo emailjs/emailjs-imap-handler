@@ -1,19 +1,24 @@
 {
-  "name": "imap-handler",
-  "main": "src/imap-handler.js",
-  "version": "0.1.7",
-  "homepage": "https://github.com/whiteout-io/imap-handler",
-  "authors": [
-    "Andris Reinman <andris@kreata.ee>"
-  ],
-  "description": "Parse and compile IMAP commands",
-  "keywords": ["IMAP", "parser"],
-  "license": "MIT",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ]
+    "name": "imap-handler",
+    "main": "src/imap-handler.js",
+    "version": "0.1.8",
+    "homepage": "https://github.com/whiteout-io/imap-handler",
+    "authors": [
+        "Andris Reinman <andris@kreata.ee>"
+    ],
+    "description": "Parse and compile IMAP commands",
+    "keywords": ["IMAP", "parser"],
+    "license": "MIT",
+    "ignore": [
+        "node_modules",
+        "bower_components",
+        "test",
+        ".gitignore",
+        ".jshintrc",
+        ".travis.yml",
+        "Gruntfile.js",
+        "LICENSE",
+        "package.json",
+        "README.md"
+    ]
 }
