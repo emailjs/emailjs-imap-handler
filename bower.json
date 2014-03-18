@@ -1,16 +1,13 @@
 {
-  "name": "imapHandler",
+  "name": "imap-handler",
   "main": "src/imap-handler.js",
   "version": "0.1.7",
-  "homepage": "https://github.com/Kreata/imapHandler",
+  "homepage": "https://github.com/whiteout-io/imap-handler",
   "authors": [
     "Andris Reinman <andris@kreata.ee>"
   ],
   "description": "Parse and compile IMAP commands",
-  "keywords": [
-    "IMAP",
-    "parser"
-  ],
+  "keywords": ["IMAP", "parser"],
   "license": "MIT",
   "ignore": [
     "**/.*",
