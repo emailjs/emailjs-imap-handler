@@ -19,7 +19,10 @@
 	"unused": true,
 
 	"globals": {
-		"console": true,
+        "imapFormalSyntax": true,
+        "imapParser": true,
+        "imapCompiler": true,
+        "console": true,
 		"define": true,
 		"describe": true,
 		"it": true,
