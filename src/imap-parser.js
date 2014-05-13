@@ -442,6 +442,7 @@
                         if (i >= len) {
                             throw new Error("Unexpected end of input at position " + (this.pos + i));
                         }
+                        chr = this.str.charAt(i);
                     }
 
                     if (imapFormalSyntax["TEXT-CHAR"]().indexOf(chr) < 0) {

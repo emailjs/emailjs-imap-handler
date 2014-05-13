@@ -454,6 +454,25 @@
                 }).to.throw(Error);
             });
         });
+
+        describe("Escaped quotes", function() {
+            it('should succeed', function() {
+                expect(imapHandler.parser('* 331 FETCH (ENVELOPE ("=?ISO-8859-1?Q?\\"G=FCnter__Hammerl\\"?="))').attributes).to.deep.equal([{
+                        type: "ATOM",
+                        value: "FETCH"
+                    },
+                    [{
+                            type: "ATOM",
+                            value: "ENVELOPE"
+                        },
+                        [{
+                            type: "STRING",
+                            value: "=?ISO-8859-1?Q?\"G=FCnter__Hammerl\"?="
+                        }]
+                    ]
+                ]);
+            });
+        });
     });
 
 }));
