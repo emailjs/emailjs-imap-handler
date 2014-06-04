@@ -26,7 +26,7 @@
     } else if (typeof exports === "object") {
         module.exports = factory(require('./imap-formal-syntax'));
     } else {
-        root.imapParser = factory(imapFormalSyntax);
+        root.imapParser = factory(root.imapFormalSyntax);
     }
 }(this, function(imapFormalSyntax) {
 

@@ -27,7 +27,7 @@
     } else if (typeof exports === 'object') {
         module.exports = factory(require("./imap-parser"), require("./imap-compiler"));
     } else {
-        root.imapHandler = factory(imapParser, imapCompiler);
+        root.imapHandler = factory(root.imapParser, root.imapCompiler);
     }
 }(this, function(imapParser, imapCompiler) {
 
