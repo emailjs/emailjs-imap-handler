@@ -38,7 +38,7 @@
                 expect(function() {
                     imapHandler.parser("* CMD");
                 }).to.not.
-                throw (Error);
+                throw(Error);
             });
 
             it("should fail for empty tag", function() {
@@ -59,6 +59,15 @@
                 }).to.throw(Error);
             });
         });
+
+        describe("get arguments", function() {
+            it("should allow trailing whitespace and empty arguments", function() {
+                expect(function() {
+                    imapHandler.parser("* SEARCH ");
+                }).to.not.throw(Error);
+            });
+        });
+
         describe("get command", function() {
             it("should succeed", function() {
                 expect(imapHandler.parser("TAG1 CMD").command).to.equal("CMD");
@@ -86,8 +95,6 @@
                 }).to.throw(Error);
             });
         });
-
-
 
         describe("get attribute", function() {
             it("should succeed", function() {

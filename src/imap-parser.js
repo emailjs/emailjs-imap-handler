@@ -590,7 +590,7 @@
             response.command += " " + parser.getElement(imapFormalSyntax.command());
         }
 
-        if (parser.remainder.length) {
+        if (parser.remainder.trim().length) {
             parser.getSpace();
             response.attributes = parser.getAttributes();
         }
