@@ -6,13 +6,9 @@ UMD module that parses and compiles IMAP commands.
 
 ## Install
 
-### [Bower](http://bower.io/):
-
-    bower install git@github.com:whiteout-io/imap-handler.git#v0.1.9
-
 ### [npm](https://www.npmjs.org/):
 
-    npm install https://github.com/whiteout-io/imap-handler/tarball/v0.1.9
+    npm install https://github.com/whiteout-io/imap-handler/tarball/<TAG_NAME>
 
 ## Usage
 

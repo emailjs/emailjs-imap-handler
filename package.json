@@ -1,7 +1,7 @@
 {
 	"name": "imap-handler",
 	"main": "src/imap-handler.js",
-	"version": "0.1.9",
+	"version": "0.1.10",
 	"homepage": "https://github.com/whiteout-io/imap-handler",
 	"author": "Andris Reinman <andris@kreata.ee>",
 	"description": "Parse and compile IMAP commands",
