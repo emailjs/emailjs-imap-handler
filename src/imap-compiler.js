@@ -32,6 +32,22 @@
 
     "use strict";
 
+    var utf8Encode = function(chars) {
+        var ascii = "";
+        for(var i = 0; i < chars.length; i++) {
+            var c = chars[i].charCodeAt(0);
+            if (c <= 0x7f) {
+                ascii += chars[i];
+            } else {
+                var h = encodeURIComponent(chars[i]).substr(1).split('%');
+                for (var j = 0; j < h.length; j++) {
+                    ascii += String.fromCharCode(parseInt(h[j], 16));
+                }
+            }
+        }
+        return ascii;
+    };
+
     /**
      * Compiles an input object into
      */
@@ -71,17 +87,19 @@
                 lastType = node.type;
                 switch (node.type.toUpperCase()) {
                     case "LITERAL":
+                        var s = "";
                         if (!node.value) {
                             resp += "{0}\r\n";
                         } else {
-                            resp += "{" + node.value.length + "}\r\n";
+                            s = utf8Encode(node.value);
+                            resp += "{" + s.length + "}\r\n";
                         }
                         respParts.push(resp);
-                        resp = node.value || "";
+                        resp = s;
                         break;
 
                     case "STRING":
-                        resp += JSON.stringify(node.value || "");
+                        resp += JSON.stringify(utf8Encode(node.value) || "");
                         break;
 
                     case "TEXT":

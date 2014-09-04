@@ -191,6 +191,19 @@
                     };
                     expect(imapHandler.compiler(parsed, true)).to.deep.equal(["{10}\r\n", "Tere tere! {9}\r\n", "Vana kere"]);
                 });
+
+                it('should UTF-8 encode literals containing Unicode characters', function() {
+                    var parsed = {
+                        attributes: [{
+                            type: "LITERAL",
+                            value: "Jyväskylä"
+                        }, {
+                            type: "LITERAL",
+                            value: "€"
+                        }]
+                    };
+                    expect(imapHandler.compiler(parsed, true)).to.deep.equal(["{11}\r\n", "JyvÃ¤skylÃ¤ {3}\r\n", "\xe2\x82\xac"]);
+                });
             });
         });
     });
