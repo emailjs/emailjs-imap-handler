@@ -37,8 +37,7 @@
             it("should allow untagged", function() {
                 expect(function() {
                     imapHandler.parser("* CMD");
-                }).to.not.
-                throw(Error);
+                }).to.not.throw(Error);
             });
 
             it("should fail for empty tag", function() {
@@ -264,6 +263,7 @@
                     type: "LITERAL",
                     value: "abcd"
                 }]);
+
                 expect(imapHandler.parser("TAG1 CMD {4}\r\nabcd {4}\r\nkere").attributes).to.deep.equal([{
                     type: "LITERAL",
                     value: "abcd"
@@ -271,6 +271,7 @@
                     type: "LITERAL",
                     value: "kere"
                 }]);
+
                 expect(imapHandler.parser("TAG1 CMD ({4}\r\nabcd {4}\r\nkere)").attributes).to.deep.equal([
                     [{
                         type: "LITERAL",
@@ -280,36 +281,47 @@
                         value: "kere"
                     }]
                 ]);
-                it("should fail", function() {
-                    expect(function() {
-                        imapHandler.parser("TAG1 CMD {4}\r\nabcd{4}  \r\nkere");
-                    }).to.throw(Error);
-                });
             });
 
-            describe("ATOM Section", function() {
-                it("should succeed", function() {
-                    expect(imapHandler.parser("TAG1 CMD BODY[]").attributes).to.deep.equal([{
-                        type: "ATOM",
-                        value: "BODY",
-                        section: []
-                    }]);
-                    expect(imapHandler.parser("TAG1 CMD BODY[(KERE)]").attributes).to.deep.equal([{
-                        type: "ATOM",
-                        value: "BODY",
-                        section: [
-                            [{
-                                type: "ATOM",
-                                value: "KERE"
-                            }]
-                        ]
-                    }]);
-                });
-                it("should fail where default BODY and BODY.PEEK are allowed to have sections", function() {});
+            it("should fail", function() {
                 expect(function() {
-                    imapHandler.parser("TAG1 CMD KODY[]");
+                    imapHandler.parser("TAG1 CMD {4}\r\nabcd{4}  \r\nkere");
                 }).to.throw(Error);
             });
+
+            it('should allow zero length literal in the end of a list', function() {
+                expect(imapHandler.parser("TAG1 CMD ({0}\r\n)").attributes).to.deep.equal([
+                    [{
+                        type: "LITERAL",
+                        value: ""
+                    }]
+                ]);
+            });
+
+        });
+
+        describe("ATOM Section", function() {
+            it("should succeed", function() {
+                expect(imapHandler.parser("TAG1 CMD BODY[]").attributes).to.deep.equal([{
+                    type: "ATOM",
+                    value: "BODY",
+                    section: []
+                }]);
+                expect(imapHandler.parser("TAG1 CMD BODY[(KERE)]").attributes).to.deep.equal([{
+                    type: "ATOM",
+                    value: "BODY",
+                    section: [
+                        [{
+                            type: "ATOM",
+                            value: "KERE"
+                        }]
+                    ]
+                }]);
+            });
+            it("should fail where default BODY and BODY.PEEK are allowed to have sections", function() {});
+            expect(function() {
+                imapHandler.parser("TAG1 CMD KODY[]");
+            }).to.throw(Error);
         });
 
         describe("Human readable", function() {
@@ -341,6 +353,7 @@
                         value: "Hello world!"
                     }]
                 });
+
                 expect(imapHandler.parser("* OK")).to.deep.equal({
                     command: "OK",
                     tag: "*"
