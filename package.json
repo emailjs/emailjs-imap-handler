@@ -10,6 +10,10 @@
 	"scripts": {
 		"test": "grunt"
 	},
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/whiteout-io/imap-handler.git"
+	},
 	"dependencies": {},
 	"devDependencies": {
 		"chai": "~1.8.1",
