@@ -59,7 +59,7 @@
             case "BAD":
             case "PREAUTH":
             case "BYE":
-                responseCode = this.remainder.match(/^ \[[^\]]*\]/);
+                responseCode = this.remainder.match(/^ \[(?:[^\]]*\])+/);
                 if (responseCode) {
                     this.humanReadable = this.remainder.substr(responseCode[0].length).trim();
                     this.remainder = responseCode[0];
@@ -322,7 +322,8 @@
 
                             // [ starts section
                         case "[":
-                            if (["OK", "NO", "BAD", "BYE", "PREAUTH"].indexOf(this.parent.command.toUpperCase()) >= 0) {
+                            // If it is the *first* element after response command, then process as a response argument list
+                            if (["OK", "NO", "BAD", "BYE", "PREAUTH"].indexOf(this.parent.command.toUpperCase()) >= 0 && this.currentNode === this.tree) {
                                 this.currentNode.endPos = this.pos + i;
 
                                 this.currentNode = this.createNode(this.currentNode, this.pos + i);
@@ -332,16 +333,11 @@
                                 this.currentNode.type = "SECTION";
                                 this.currentNode.closed = false;
                                 this.state = "NORMAL";
-                            } else {
-                                this.currentNode = this.createNode(this.currentNode, this.pos + i);
-                                this.currentNode.type = "ATOM";
-                                this.currentNode.value = chr;
-                                this.state = "ATOM";
+                                break;
                             }
-                            break;
-
-                            // Any ATOM supported char starts a new Atom sequence, otherwise throw an error
+                            /* falls through */
                         default:
+                            // Any ATOM supported char starts a new Atom sequence, otherwise throw an error
                             // Allow \ as the first char for atom to support system flags
                             // Allow % to support LIST "" %
                             if (imapFormalSyntax["ATOM-CHAR"]().indexOf(chr) < 0 && chr !== "\\" && chr !== "%") {

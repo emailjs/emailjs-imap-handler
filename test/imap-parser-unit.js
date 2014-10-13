@@ -2,11 +2,11 @@
     "use strict";
 
     if (typeof define === "function" && define.amd) {
-        define(['chai', 'imap-handler'], factory);
+        define(['chai', 'imap-handler', './fixtures/mimetorture'], factory);
     } else if (typeof exports === 'object') {
-        module.exports = factory(require('chai'), require('../src/imap-handler'));
+        module.exports = factory(require('chai'), require('../src/imap-handler'), require('./fixtures/mimetorture'));
     }
-}(this, function(chai, imapHandler) {
+}(this, function(chai, imapHandler, mimetorture) {
     "use strict";
 
     var expect = chai.expect;
@@ -358,6 +358,39 @@
                     command: "OK",
                     tag: "*"
                 });
+
+                expect(imapHandler.parser("* OK [PERMANENTFLAGS (de:hacking $label kt-evalution [css3-page] \\*)] Flags permitted.")).to.deep.equal({
+                    tag: '*',
+                    command: 'OK',
+                    attributes: [{
+                        type: 'ATOM',
+                        value: '',
+                        section: [{
+                                type: 'ATOM',
+                                value: 'PERMANENTFLAGS'
+                            },
+                            [{
+                                type: 'ATOM',
+                                value: 'de:hacking'
+                            }, {
+                                type: 'ATOM',
+                                value: '$label'
+                            }, {
+                                type: 'ATOM',
+                                value: 'kt-evalution'
+                            }, {
+                                type: 'ATOM',
+                                value: '[css3-page]'
+                            }, {
+                                type: 'ATOM',
+                                value: '\\*'
+                            }]
+                        ]
+                    }, {
+                        type: 'TEXT',
+                        value: 'Flags permitted.'
+                    }]
+                });
             });
         });
 
@@ -491,6 +524,16 @@
                         }]
                     ]
                 ]);
+            });
+        });
+
+        describe('MimeTorture', function() {
+            it('should parse mimetorture input', function() {
+                var parsed;
+                expect(function() {
+                    parsed = imapHandler.parser(mimetorture.input);
+                }).to.not.throw(Error);
+                expect(parsed).to.deep.equal(mimetorture.output);
             });
         });
     });
