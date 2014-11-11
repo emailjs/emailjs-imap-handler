@@ -211,6 +211,14 @@
                         value: "1234"
                     }]
                 ]);
+                // Trailing whitespace in a BODYSTRUCTURE atom list has been
+                // observed on yahoo.co.jp's
+                expect(imapHandler.parser("TAG1 CMD (1234 )").attributes).to.deep.equal([
+                    [{
+                        type: "ATOM",
+                        value: "1234"
+                    }]
+                ]);
                 expect(imapHandler.parser("TAG1 CMD (1234) ").attributes).to.deep.equal([
                     [{
                         type: "ATOM",
@@ -218,12 +226,6 @@
                     }]
                 ]);
             });
-            it("should fail", function() {
-                expect(function() {
-                    imapHandler.parser("TAG1 CMD (1234 )");
-                }).to.throw(Error);
-            });
-
         });
 
         describe('nested list', function() {
@@ -242,6 +244,19 @@
                     ]
                 ]);
                 expect(imapHandler.parser("TAG1 CMD (( (TERE)) VANA)").attributes).to.deep.equal([
+                    [
+                        [
+                            [{
+                                type: "ATOM",
+                                value: "TERE"
+                            }]
+                        ], {
+                            type: "ATOM",
+                            value: "VANA"
+                        }
+                    ]
+                ]);
+                expect(imapHandler.parser("TAG1 CMD (((TERE) ) VANA)").attributes).to.deep.equal([
                     [
                         [
                             [{
@@ -314,6 +329,30 @@
                         [{
                             type: "ATOM",
                             value: "KERE"
+                        }]
+                    ]
+                }]);
+            });
+            it("will not fail due to trailing whitespace", function() {
+                // We intentionally have trailing whitespace in the section here
+                // because we altered the parser to handle this when we made it
+                // legal for lists and it makes sense to accordingly test it.
+                // However, we have no recorded incidences of this happening in
+                // reality (unlike for lists).
+                expect(imapHandler.parser("TAG1 CMD BODY[HEADER.FIELDS (Subject From) ]").attributes).to.deep.equal([{
+                    type: "ATOM",
+                    value: "BODY",
+                    section: [
+                        {
+                            type: 'ATOM',
+                            value: 'HEADER.FIELDS'
+                        },
+                        [{
+                            type: "ATOM",
+                            value: "Subject"
+                        }, {
+                            type: "ATOM",
+                            value: "From"
                         }]
                     ]
                 }]);
