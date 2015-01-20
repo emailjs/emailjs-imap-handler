@@ -398,6 +398,131 @@
                     tag: "*"
                 });
 
+                // USEATTR is from RFC6154; we are testing that just an ATOM
+                // on its own will parse successfully here.  (All of the
+                // RFC5530 codes are also single atoms.)
+                expect(imapHandler.parser("TAG1 OK [USEATTR] \\All not supported")).to.deep.equal({
+                    tag: 'TAG1',
+                    command: 'OK',
+                    attributes: [{
+                        type: 'ATOM',
+                        value: '',
+                        section: [{
+                                type: 'ATOM',
+                                value: 'USEATTR'
+                            }
+                        ]
+                    }, {
+                        type: 'TEXT',
+                        value: '\\All not supported'
+                    }]
+                });
+
+                // RFC5267 defines the NOUPDATE error.  Including for quote /
+                // string coverage.
+                expect(imapHandler.parser("* NO [NOUPDATE \"B02\"] Too many contexts")).to.deep.equal({
+                    tag: '*',
+                    command: 'NO',
+                    attributes: [{
+                        type: 'ATOM',
+                        value: '',
+                        section: [{
+                                type: 'ATOM',
+                                value: 'NOUPDATE'
+                            }, {
+                                type: 'STRING',
+                                value: 'B02'
+                            }
+                        ]
+                    }, {
+                        type: 'TEXT',
+                        value: 'Too many contexts'
+                    }]
+                });
+
+
+                // RFC5464 defines the METADATA response code; adding this to
+                // ensure the transition for when "2199" hits "]" is handled
+                // safely.
+                expect(imapHandler.parser("TAG1 OK [METADATA LONGENTRIES 2199] GETMETADATA complete")).to.deep.equal({
+                    tag: 'TAG1',
+                    command: 'OK',
+                    attributes: [{
+                        type: 'ATOM',
+                        value: '',
+                        section: [{
+                                type: 'ATOM',
+                                value: 'METADATA'
+                            }, {
+                                type: 'ATOM',
+                                value: 'LONGENTRIES'
+                            }, {
+                                type: 'ATOM',
+                                value: '2199'
+                            }
+                        ]
+                    }, {
+                        type: 'TEXT',
+                        value: 'GETMETADATA complete'
+                    }]
+                });
+
+                // RFC4467 defines URLMECH.  Included because of the example
+                // third atom involves base64-encoding which is somewhat unusual
+                expect(imapHandler.parser("TAG1 OK [URLMECH INTERNAL XSAMPLE=P34OKhO7VEkCbsiYY8rGEg==] done")).to.deep.equal({
+                    tag: 'TAG1',
+                    command: 'OK',
+                    attributes: [{
+                        type: 'ATOM',
+                        value: '',
+                        section: [{
+                                type: 'ATOM',
+                                value: 'URLMECH'
+                            }, {
+                                type: 'ATOM',
+                                value: 'INTERNAL'
+                            }, {
+                                type: 'ATOM',
+                                value: 'XSAMPLE=P34OKhO7VEkCbsiYY8rGEg=='
+                            }
+                        ]
+                    }, {
+                        type: 'TEXT',
+                        value: 'done'
+                    }]
+                });
+
+                // RFC2221 defines REFERRAL where the argument is an imapurl
+                // (defined by RFC2192 which is obsoleted by RFC5092) which
+                // is significantly more complicated than the rest of the IMAP
+                // grammar and which was based on the RFC2060 grammar where
+                // resp_text_code included:
+                //   atom [SPACE 1*<any TEXT_CHAR except "]">]
+                // So this is just a test case of our explicit special-casing
+                // of REFERRAL.
+                expect(imapHandler.parser("TAG1 NO [REFERRAL IMAP://user;AUTH=*@SERVER2/] Remote Server")).to.deep.equal({
+                    tag: 'TAG1',
+                    command: 'NO',
+                    attributes: [{
+                        type: 'ATOM',
+                        value: '',
+                        section: [{
+                                type: 'ATOM',
+                                value: 'REFERRAL'
+                            }, {
+                                type: 'ATOM',
+                                value: 'IMAP://user;AUTH=*@SERVER2/'
+                            }
+                        ]
+                    }, {
+                        type: 'TEXT',
+                        value: 'Remote Server'
+                    }]
+                });
+
+                // PERMANENTFLAGS is from RFC3501.  Its syntax is also very
+                // similar to BADCHARSET, except BADCHARSET has astrings
+                // inside the list.
                 expect(imapHandler.parser("* OK [PERMANENTFLAGS (de:hacking $label kt-evalution [css3-page] \\*)] Flags permitted.")).to.deep.equal({
                     tag: '*',
                     command: 'OK',
@@ -430,6 +555,60 @@
                         value: 'Flags permitted.'
                     }]
                 });
+
+                // COPYUID is from RFC4315 and included the previously failing
+                // parsing situation of a sequence terminated by "]" rather than
+                // whitespace.
+                expect(imapHandler.parser("TAG1 OK [COPYUID 4 1417051618:1417051620 1421730687:1421730689] COPY completed")).to.deep.equal({
+                    tag: 'TAG1',
+                    command: 'OK',
+                    attributes: [{
+                        type: 'ATOM',
+                        value: '',
+                        section: [{
+                                type: 'ATOM',
+                                value: 'COPYUID'
+                            }, {
+                                type: 'ATOM',
+                                value: '4'
+                            }, {
+                                type: 'SEQUENCE',
+                                value: '1417051618:1417051620'
+                            }, {
+                                type: 'SEQUENCE',
+                                value: '1421730687:1421730689'
+                            }
+                        ]
+                    }, {
+                        type: 'TEXT',
+                        value: 'COPY completed'
+                    }]
+                });
+
+                // MODIFIED is from RFC4551 and is basically the same situation
+                // as the COPYUID case, but in this case our example sequences
+                // have commas in them.  (Note that if there was no comma, the
+                // "7,9" payload would end up an ATOM.)
+                expect(imapHandler.parser("TAG1 OK [MODIFIED 7,9] Conditional STORE failed")).to.deep.equal({
+                    tag: 'TAG1',
+                    command: 'OK',
+                    attributes: [{
+                        type: 'ATOM',
+                        value: '',
+                        section: [{
+                                type: 'ATOM',
+                                value: 'MODIFIED'
+                            }, {
+                                type: 'SEQUENCE',
+                                value: '7,9'
+                            }
+                        ]
+                    }, {
+                        type: 'TEXT',
+                        value: 'Conditional STORE failed'
+                    }]
+                });
+
             });
         });
 
