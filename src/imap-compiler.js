@@ -19,97 +19,97 @@
 // THE SOFTWARE.
 
 (function(root, factory) {
-    "use strict";
+    'use strict';
 
-    if (typeof define === "function" && define.amd) {
-        define(["imap-formal-syntax"], factory);
-    } else if (typeof exports === "object") {
-        module.exports = factory(require("./imap-formal-syntax"));
+    if (typeof define === 'function' && define.amd) {
+        define(['imap-formal-syntax'], factory);
+    } else if (typeof exports === 'object') {
+        module.exports = factory(require('./imap-formal-syntax'));
     } else {
         root.imapCompiler = factory(root.imapFormalSyntax);
     }
 }(this, function(imapFormalSyntax) {
 
-    "use strict";
+    'use strict';
 
     /**
      * Compiles an input object into
      */
     return function(response, asArray) {
         var respParts = [],
-            resp = (response.tag || "") + (response.command ? " " + response.command : ""),
+            resp = (response.tag || '') + (response.command ? ' ' + response.command : ''),
             val, lastType,
             walk = function(node) {
 
-                if (lastType === "LITERAL" || (["(", "<", "["].indexOf(resp.substr(-1)) < 0 && resp.length)) {
-                    resp += " ";
+                if (lastType === 'LITERAL' || (['(', '<', '['].indexOf(resp.substr(-1)) < 0 && resp.length)) {
+                    resp += ' ';
                 }
 
                 if (Array.isArray(node)) {
-                    lastType = "LIST";
-                    resp += "(";
+                    lastType = 'LIST';
+                    resp += '(';
                     node.forEach(walk);
-                    resp += ")";
+                    resp += ')';
                     return;
                 }
 
-                if (!node && typeof node !== "string" && typeof node !== "number") {
-                    resp += "NIL";
+                if (!node && typeof node !== 'string' && typeof node !== 'number') {
+                    resp += 'NIL';
                     return;
                 }
 
-                if (typeof node === "string") {
+                if (typeof node === 'string') {
                     resp += JSON.stringify(node);
                     return;
                 }
 
-                if (typeof node === "number") {
+                if (typeof node === 'number') {
                     resp += Math.round(node) || 0; // Only integers allowed
                     return;
                 }
 
                 lastType = node.type;
                 switch (node.type.toUpperCase()) {
-                    case "LITERAL":
+                    case 'LITERAL':
                         if (!node.value) {
-                            resp += "{0}\r\n";
+                            resp += '{0}\r\n';
                         } else {
-                            resp += "{" + node.value.length + "}\r\n";
+                            resp += '{' + node.value.length + '}\r\n';
                         }
                         respParts.push(resp);
-                        resp = node.value || "";
+                        resp = node.value || '';
                         break;
 
-                    case "STRING":
-                        resp += JSON.stringify(node.value || "");
+                    case 'STRING':
+                        resp += JSON.stringify(node.value || '');
                         break;
 
-                    case "TEXT":
-                    case "SEQUENCE":
-                        resp += node.value || "";
+                    case 'TEXT':
+                    case 'SEQUENCE':
+                        resp += node.value || '';
                         break;
 
-                    case "NUMBER":
+                    case 'NUMBER':
                         resp += (node.value || 0);
                         break;
 
-                    case "ATOM":
-                    case "SECTION":
-                        val = node.value || "";
+                    case 'ATOM':
+                    case 'SECTION':
+                        val = node.value || '';
 
-                        if (imapFormalSyntax.verify(val.charAt(0) === "\\" ? val.substr(1) : val, imapFormalSyntax["ATOM-CHAR"]()) >= 0) {
+                        if (imapFormalSyntax.verify(val.charAt(0) === '\\' ? val.substr(1) : val, imapFormalSyntax['ATOM-CHAR']()) >= 0) {
                             val = JSON.stringify(val);
                         }
 
                         resp += val;
 
                         if (node.section) {
-                            resp += "[";
+                            resp += '[';
                             node.section.forEach(walk);
-                            resp += "]";
+                            resp += ']';
                         }
                         if (node.partial) {
-                            resp += "<" + node.partial.join(".") + ">";
+                            resp += '<' + node.partial.join('.') + '>';
                         }
                         break;
                 }
@@ -122,6 +122,6 @@
             respParts.push(resp);
         }
 
-        return asArray ? respParts : respParts.join("");
+        return asArray ? respParts : respParts.join('');
     };
 }));
