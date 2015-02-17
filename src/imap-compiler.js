@@ -35,7 +35,7 @@
     /**
      * Compiles an input object into
      */
-    return function(response, asArray) {
+    return function(response, asArray, isLogging) {
         var respParts = [],
             resp = (response.tag || '') + (response.command ? ' ' + response.command : ''),
             val, lastType,
@@ -59,7 +59,11 @@
                 }
 
                 if (typeof node === 'string') {
-                    resp += JSON.stringify(node);
+                    if (isLogging && node.length > 20) {
+                        resp += '"(* ' + node.length + 'B string *)"';
+                    } else {
+                        resp += JSON.stringify(node);
+                    }
                     return;
                 }
 
@@ -69,21 +73,34 @@
                 }
 
                 lastType = node.type;
+
+                if (isLogging && node.sensitive) {
+                    resp += '"(* value hidden *)"';
+                    return;
+                }
+
                 switch (node.type.toUpperCase()) {
                     case 'LITERAL':
-                        if (!node.value) {
-                            resp += '{0}\r\n';
+                        if (isLogging) {
+                            resp += '"(* ' + node.value.length + 'B literal *)"';
                         } else {
-                            resp += '{' + node.value.length + '}\r\n';
+                            if (!node.value) {
+                                resp += '{0}\r\n';
+                            } else {
+                                resp += '{' + node.value.length + '}\r\n';
+                            }
+                            respParts.push(resp);
+                            resp = node.value || '';
                         }
-                        respParts.push(resp);
-                        resp = node.value || '';
                         break;
 
                     case 'STRING':
-                        resp += JSON.stringify(node.value || '');
+                        if (isLogging && node.value.length > 20) {
+                            resp += '"(* ' + node.value.length + 'B string *)"';
+                        } else {
+                            resp += JSON.stringify(node.value || '');
+                        }
                         break;
-
                     case 'TEXT':
                     case 'SEQUENCE':
                         resp += node.value || '';
