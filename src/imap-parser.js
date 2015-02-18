@@ -468,9 +468,11 @@
                         chr = this.str.charAt(i);
                     }
 
+                    /* // skip this check, otherwise the parser might explode on binary input
                     if (imapFormalSyntax['TEXT-CHAR']().indexOf(chr) < 0) {
                         throw new Error('Unexpected char at position ' + (this.pos + i));
                     }
+                    */
 
                     this.currentNode.value += chr;
                     break;

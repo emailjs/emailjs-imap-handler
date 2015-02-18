@@ -106,13 +106,48 @@
                 it('should compile correctly', function() {
                     parsed.attributes = [{
                             type: 'String',
-                            value: 'Tere tere!'
+                            value: 'Tere tere!',
+                            sensitive: true
                         },
                         'Vana kere'
                     ];
 
                     expect(imapHandler.compiler(parsed)).to.equal('* CMD "Tere tere!" "Vana kere"');
 
+                });
+
+                it('should keep short strings', function() {
+                    parsed.attributes = [{
+                            type: 'String',
+                            value: 'Tere tere!'
+                        },
+                        'Vana kere'
+                    ];
+
+                    expect(imapHandler.compiler(parsed, false, true)).to.equal('* CMD "Tere tere!" "Vana kere"');
+                });
+
+                it('should hide strings', function() {
+                    parsed.attributes = [{
+                            type: 'String',
+                            value: 'Tere tere!',
+                            sensitive: true
+                        },
+                        'Vana kere'
+                    ];
+
+                    expect(imapHandler.compiler(parsed, false, true)).to.equal('* CMD "(* value hidden *)" "Vana kere"');
+                });
+
+                it('should hide long strings', function() {
+                    parsed.attributes = [{
+                            type: 'String',
+                            value: 'Tere tere! Tere tere! Tere tere! Tere tere! Tere tere!'
+                        },
+                        'Vana kere'
+                    ];
+
+                    expect(imapHandler.compiler(parsed, false, true)).to.equal('* CMD "(* 54B string *)" "Vana kere"');
                 });
             });
 
@@ -190,6 +225,21 @@
                         }]
                     };
                     expect(imapHandler.compiler(parsed, true)).to.deep.equal(['{10}\r\n', 'Tere tere! {9}\r\n', 'Vana kere']);
+                });
+
+                it('shoud return byte length', function() {
+                    var parsed = {
+                        tag: '*',
+                        command: 'CMD',
+                        attributes: [{
+                                type: 'LITERAL',
+                                value: 'Tere tere!'
+                            },
+                            'Vana kere'
+                        ]
+                    };
+
+                    expect(imapHandler.compiler(parsed, false, true)).to.equal('* CMD "(* 10B literal *)" "Vana kere"');
                 });
             });
         });

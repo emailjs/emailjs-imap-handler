@@ -176,6 +176,22 @@
                     value: 'DEFGH'
                 }]);
             });
+
+            it('should not explode on invalid char', function() {
+                expect(imapHandler.parser('* 1 FETCH (BODY[] "\xc2")').attributes).to.deep.equal([{
+                        type: 'ATOM',
+                        value: 'FETCH'
+                    },
+                    [{
+                        type: 'ATOM',
+                        value: 'BODY',
+                        section: []
+                    }, {
+                        type: 'STRING',
+                        value: '\xc2'
+                    }]
+                ]);
+            });
         });
 
         describe('get list', function() {
