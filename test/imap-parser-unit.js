@@ -659,10 +659,6 @@
                 }).to.throw(Error);
 
                 expect(function() {
-                    imapHandler.parser('TAG1 CMD BODY[]<123.0>');
-                }).to.throw(Error);
-
-                expect(function() {
                     imapHandler.parser('TAG1 CMD BODY[]<01>');
                 }).to.throw(Error);
 
