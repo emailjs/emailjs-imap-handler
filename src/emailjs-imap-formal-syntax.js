@@ -26,7 +26,7 @@
     } else if (typeof exports === 'object') {
         module.exports = factory();
     } else {
-        root.imapFormalSyntax = factory();
+        root['emailjs-imap-formal-syntax'] = factory();
     }
 }(this, function() {
 

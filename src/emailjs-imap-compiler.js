@@ -22,11 +22,11 @@
     'use strict';
 
     if (typeof define === 'function' && define.amd) {
-        define(['imap-formal-syntax'], factory);
+        define(['emailjs-imap-formal-syntax'], factory);
     } else if (typeof exports === 'object') {
-        module.exports = factory(require('./imap-formal-syntax'));
+        module.exports = factory(require('./emailjs-imap-formal-syntax'));
     } else {
-        root.imapCompiler = factory(root.imapFormalSyntax);
+        root['emailjs-imap-compiler'] = factory(root['emailjs-imap-formal-syntax']);
     }
 }(this, function(imapFormalSyntax) {
 

@@ -2,15 +2,11 @@
 
 UMD module that parses and compiles IMAP commands.
 
-[![Build Status](https://travis-ci.org/whiteout-io/imap-handler.png?branch=master)](https://travis-ci.org/whiteout-io/imap-handler)
-
-## Install
-
-### [npm](https://www.npmjs.org/):
-
-    npm install wo-imap-handler
-
 ## Usage
+
+```
+npm install emailjs-imap-handler
+```
 
 ### Parse IMAP commands
 

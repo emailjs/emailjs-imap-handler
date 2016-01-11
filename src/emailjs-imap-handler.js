@@ -23,11 +23,11 @@
     'use strict';
 
     if (typeof define === 'function' && define.amd) {
-        define(['./imap-parser', './imap-compiler'], factory);
+        define(['./emailjs-imap-parser', './emailjs-imap-compiler'], factory);
     } else if (typeof exports === 'object') {
-        module.exports = factory(require('./imap-parser'), require('./imap-compiler'));
+        module.exports = factory(require('./emailjs-imap-parser'), require('./emailjs-imap-compiler'));
     } else {
-        root.imapHandler = factory(root.imapParser, root.imapCompiler);
+        root['emailjs-imap-handler'] = factory(root['emailjs-imap-parser'], root['emailjs-imap-compiler']);
     }
 }(this, function(imapParser, imapCompiler) {
 

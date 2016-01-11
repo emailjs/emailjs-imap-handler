@@ -2,9 +2,9 @@
     'use strict';
 
     if (typeof define === 'function' && define.amd) {
-        define(['chai', 'imap-handler'], factory);
+        define(['chai', 'emailjs-imap-handler'], factory);
     } else if (typeof exports === 'object') {
-        module.exports = factory(require('chai'), require('../src/imap-handler'));
+        module.exports = factory(require('chai'), require('../src/emailjs-imap-handler'));
     }
 }(this, function(chai, imapHandler) {
     'use strict';

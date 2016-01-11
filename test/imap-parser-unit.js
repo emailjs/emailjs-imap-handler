@@ -2,9 +2,9 @@
     'use strict';
 
     if (typeof define === 'function' && define.amd) {
-        define(['chai', 'imap-handler', './fixtures/mimetorture'], factory);
+        define(['chai', 'emailjs-imap-handler', './fixtures/mimetorture'], factory);
     } else if (typeof exports === 'object') {
-        module.exports = factory(require('chai'), require('../src/imap-handler'), require('./fixtures/mimetorture'));
+        module.exports = factory(require('chai'), require('../src/emailjs-imap-handler'), require('./fixtures/mimetorture'));
     }
 }(this, function(chai, imapHandler, mimetorture) {
     'use strict';
