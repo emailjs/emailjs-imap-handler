@@ -38,19 +38,21 @@
     return function(response, asArray, isLogging) {
         var respParts = [],
             resp = (response.tag || '') + (response.command ? ' ' + response.command : ''),
-            val, lastType,
+            val, needsSpace = true,
             walk = function(node) {
 
-                if (lastType === 'LITERAL' || (['(', '<', '['].indexOf(resp.substr(-1)) < 0 && resp.length)) {
+                if (resp.length > 0 && needsSpace) {
                     resp += ' ';
                 }
 
                 if (Array.isArray(node)) {
-                    lastType = 'LIST';
+                    needsSpace = false;
                     resp += '(';
                     node.forEach(walk);
                     resp += ')';
                     return;
+                } else {
+                    needsSpace = true;
                 }
 
                 if (!node && typeof node !== 'string' && typeof node !== 'number') {
@@ -71,8 +73,6 @@
                     resp += Math.round(node) || 0; // Only integers allowed
                     return;
                 }
-
-                lastType = node.type;
 
                 if (isLogging && node.sensitive) {
                     resp += '"(* value hidden *)"';
@@ -121,6 +121,7 @@
                         resp += val;
 
                         if (node.section) {
+                            needsSpace = false;
                             resp += '[';
                             node.section.forEach(walk);
                             resp += ']';
