@@ -194,6 +194,69 @@
             });
         });
 
+        //  The following 4 tests are added as part of solution and verification
+        //  of https://github.com/emailjs/emailjs-imap-handler/issues/16
+        //  See tools.ietf.org/html/rfc3501 and especially chapters:
+        //  * 5.1. Mailbox Naming
+        //  * 5.1.1. Mailbox Hierarchy Naming
+        describe('Mailbox names with brackets', function() {
+            describe('for server with / as hierarchical separator', function() {
+                it('should support Parent folder being in brackets', function() {
+                    expect(imapHandler.parser('TAG1 CMD "/" [Folder]/Subfolder').attributes).to.deep.equal([
+                        {
+                            type: 'STRING',
+                            value: '/'
+                        },
+                        {
+                            type: 'ATOM',
+                            value: '[Folder]/Subfolder'
+                        }
+                    ]);
+                });
+
+                it('should support sub-folder being in brackets', function() {
+                    expect(imapHandler.parser('TAG1 CMD "/" Folder/[Subfolder]').attributes).to.deep.equal([
+                        {
+                            type: 'STRING',
+                            value: '/'
+                        },
+                        {
+                            type: 'ATOM',
+                            value: 'Folder/[Subfolder]'
+                        }
+                    ]);
+                });
+            });
+
+            describe('for server with . as hierarchical separator', function() {
+                it('should support Parent folder being in brackets', function() {
+                    expect(imapHandler.parser('TAG1 CMD "." [Folder].Subfolder').attributes).to.deep.equal([
+                        {
+                            type: 'STRING',
+                            value: '.'
+                        },
+                        {
+                            type: 'ATOM',
+                            value: '[Folder].Subfolder'
+                        }
+                    ]);
+                });
+
+                it('should support sub-folder being in brackets', function() {
+                    expect(imapHandler.parser('TAG1 CMD "." Folder.[Subfolder]').attributes).to.deep.equal([
+                        {
+                            type: 'STRING',
+                            value: '.'
+                        },
+                        {
+                            type: 'ATOM',
+                            value: 'Folder.[Subfolder]'
+                        }
+                    ]);
+                });
+            });
+        });
+
         describe('get list', function() {
             it('should succeed', function() {
                 expect(imapHandler.parser('TAG1 CMD (1234)').attributes).to.deep.equal([
@@ -372,10 +435,6 @@
                     ]
                 }]);
             });
-            it('should fail where default BODY and BODY.PEEK are allowed to have sections', function() {});
-            expect(function() {
-                imapHandler.parser('TAG1 CMD KODY[]');
-            }).to.throw(Error);
         });
 
         describe('Human readable', function() {

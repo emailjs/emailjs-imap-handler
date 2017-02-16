@@ -416,11 +416,7 @@
                     }
 
                     // [ starts a section group for this element
-                    if (chr === '[') {
-                        // allowed only for selected elements
-                        if (['BODY', 'BODY.PEEK'].indexOf(this.currentNode.value.toUpperCase()) < 0) {
-                            throw new Error('Unexpected section start char [ at position ' + this.pos);
-                        }
+                    if (chr === '[' && ['BODY', 'BODY.PEEK'].indexOf(this.currentNode.value.toUpperCase()) >= 0) {
                         this.currentNode.endPos = this.pos + i;
                         this.currentNode = this.createNode(this.currentNode.parentNode, this.pos + i);
                         this.currentNode.type = 'SECTION';
