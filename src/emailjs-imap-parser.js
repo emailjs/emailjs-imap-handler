@@ -32,10 +32,25 @@
 
     'use strict';
 
+    var ASCII_LEFT_BRACKET = 91;
+    var ASCII_RIGHT_BRACKET = 93;
+    var ASCII_SPACE = 32;
+
+    function fromCharCode(uint8) {
+        var length = uint8.length;
+        if (length === 0) {
+            return ''; // Otherwise the join below will return 0, not ''
+        }
+        var stringArray = [length];
+        for (var i = 0; i < length; i++) {
+            stringArray[i] = String.fromCharCode(uint8[i]);
+        }
+        return stringArray.join('');
+    }
+
     function ParserInstance(input, options) {
-        this.input = (input || '').toString();
+        this.remainder = new Uint8Array(input || 0);
         this.options = options || {};
-        this.remainder = this.input;
         this.pos = 0;
     }
 
@@ -47,8 +62,6 @@
     };
 
     ParserInstance.prototype.getCommand = function() {
-        var responseCode;
-
         if (!this.command) {
             this.command = this.getElement(imapFormalSyntax.command());
         }
@@ -59,13 +72,14 @@
             case 'BAD':
             case 'PREAUTH':
             case 'BYE':
-                responseCode = this.remainder.match(/^ \[(?:[^\]]*\])+/);
-                if (responseCode) {
-                    this.humanReadable = this.remainder.substr(responseCode[0].length).trim();
-                    this.remainder = responseCode[0];
+
+                var lastRightBracket = this.remainder.lastIndexOf(ASCII_RIGHT_BRACKET);
+                if (this.remainder[1] === ASCII_LEFT_BRACKET && lastRightBracket > 1) {
+                    this.humanReadable = fromCharCode(this.remainder.subarray(lastRightBracket + 1)).trim(); // todo get rid of trim
+                    this.remainder = this.remainder.subarray(0, lastRightBracket + 1);
                 } else {
-                    this.humanReadable = this.remainder.trim();
-                    this.remainder = '';
+                    this.humanReadable = fromCharCode(this.remainder).trim(); // todo get rid of trim
+                    this.remainder = new Uint8Array(0);
                 }
                 break;
         }
@@ -74,13 +88,18 @@
     };
 
     ParserInstance.prototype.getElement = function(syntax) {
-        var match, element, errPos;
-        if (this.remainder.match(/^\s/)) {
+        var element, errPos;
+        if (this.remainder[0] === ASCII_SPACE) {
             throw new Error('Unexpected whitespace at position ' + this.pos);
         }
 
-        if ((match = this.remainder.match(/^[^\s]+(?=\s|$)/))) {
-            element = match[0];
+        var firstSpace = this.remainder.indexOf(ASCII_SPACE);
+        if (this.remainder.length > 0 && firstSpace !== 0) {
+            if (firstSpace === -1) {
+                element = fromCharCode(this.remainder);
+            } else {
+                element = fromCharCode(this.remainder.subarray(0, firstSpace));
+            }
 
             if ((errPos = imapFormalSyntax.verify(element, syntax)) >= 0) {
                 throw new Error('Unexpected char at position ' + (this.pos + errPos));
@@ -89,8 +108,8 @@
             throw new Error('Unexpected end of input at position ' + this.pos);
         }
 
-        this.pos += match[0].length;
-        this.remainder = this.remainder.substr(match[0].length);
+        this.pos += element.length;
+        this.remainder = this.remainder.subarray(element.length);
 
         return element;
     };
@@ -100,12 +119,12 @@
             throw new Error('Unexpected end of input at position ' + this.pos);
         }
 
-        if (imapFormalSyntax.verify(this.remainder.charAt(0), imapFormalSyntax.SP()) >= 0) {
+        if (imapFormalSyntax.verify(String.fromCharCode(this.remainder[0]), imapFormalSyntax.SP()) >= 0) {
             throw new Error('Unexpected char at position ' + this.pos);
         }
 
         this.pos++;
-        this.remainder = this.remainder.substr(1);
+        this.remainder = this.remainder.subarray(1);
     };
 
     ParserInstance.prototype.getAttributes = function() {
@@ -113,11 +132,11 @@
             throw new Error('Unexpected end of input at position ' + this.pos);
         }
 
-        if (this.remainder.match(/^\s/)) {
+        if (this.remainder[0] === ASCII_SPACE) {
             throw new Error('Unexpected whitespace at position ' + this.pos);
         }
 
-        return new TokenParser(this, this.pos, this.remainder, this.options).getAttributes();
+        return new TokenParser(this, this.pos, fromCharCode(this.remainder), this.options).getAttributes();
     };
 
     function TokenParser(parent, startPos, str, options) {
@@ -631,7 +650,7 @@
             response.command += ' ' + parser.getElement(imapFormalSyntax.command());
         }
 
-        if (parser.remainder.trim().length) {
+        if (fromCharCode(parser.remainder).trim().length) {
             parser.getSpace();
             response.attributes = parser.getAttributes();
         }
