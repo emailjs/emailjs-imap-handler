@@ -32,11 +32,9 @@
 
     'use strict';
 
-    var ASCII_NL = 10;
-    var ASCII_CR = 13;
-    var ASCII_SPACE = 32;
     var ASCII_LEFT_BRACKET = 91;
     var ASCII_RIGHT_BRACKET = 93;
+    var ASCII_SPACE = 32;
 
     function fromCharCode(uint8) {
         var length = uint8.length;
@@ -138,11 +136,11 @@
             throw new Error('Unexpected whitespace at position ' + this.pos);
         }
 
-        return new TokenParser(this, this.pos, this.remainder.subarray(), this.options).getAttributes();
+        return new TokenParser(this, this.pos, fromCharCode(this.remainder), this.options).getAttributes();
     };
 
-    function TokenParser(parent, startPos, uint8Array, options) {
-        this.uint8Array = uint8Array;
+    function TokenParser(parent, startPos, str, options) {
+        this.str = (str || '').toString();
         this.options = options || {};
         this.parent = parent;
 
@@ -171,7 +169,7 @@
 
             // If the node was never closed, throw it
             if (!node.closed) {
-                throw new Error('Unexpected end of input at position ' + (this.pos + this.uint8Array.length - 1));
+                throw new Error('Unexpected end of input at position ' + (this.pos + this.str.length - 1));
             }
 
             switch (node.type.toUpperCase()) {
@@ -247,14 +245,15 @@
         var chr, i, len,
             checkSP = function() {
                 // jump to the next non whitespace pos
-                while (this.uint8Array[i + 1] === ' ') {
+                while (this.str.charAt(i + 1) === ' ') {
                     i++;
                 }
             }.bind(this);
 
-        for (i = 0, len = this.uint8Array.length; i < len; i++) {
+        for (i = 0, len = this.str.length; i < len; i++) {
 
-            chr = String.fromCharCode(this.uint8Array[i]); // todo not use fromCharCode at this point
+            chr = this.str.charAt(i);
+            console.log("start", i, len, chr);
 
             switch (this.state) {
 
@@ -303,7 +302,7 @@
 
                             // < starts a new partial
                         case '<':
-                            if (String.fromCharCode(this.uint8Array[i - 1]) !== ']') {
+                            if (this.str.charAt(i - 1) !== ']') {
                                 this.currentNode = this.createNode(this.currentNode, this.pos + i);
                                 this.currentNode.type = 'ATOM';
                                 this.currentNode.value = chr;
@@ -356,7 +355,7 @@
                                 // RFC2192/RFC5092 imapurl that we will try to parse as an ATOM but
                                 // fail quite badly at parsing.  Since the imapurl is such a unique
                                 // (and crazy) term, we just specialize that case here.
-                                if (fromCharCode(this.uint8Array.subarray(i + 1, i + 10)).toUpperCase() === 'REFERRAL ') {
+                                if (this.str.substr(i + 1, 9).toUpperCase() === 'REFERRAL ') {
                                     // create the REFERRAL atom
                                     this.currentNode = this.createNode(this.currentNode, this.pos + i + 1);
                                     this.currentNode.type = 'ATOM';
@@ -369,11 +368,10 @@
                                     // just call this an ATOM, even though IMAPURL might be more correct
                                     this.currentNode.type = 'ATOM';
                                     // jump i to the ']'
-                                    i = this.uint8Array.indexOf(ASCII_RIGHT_BRACKET, i + 10);
+                                    i = this.str.indexOf(']', i + 10);
                                     this.currentNode.endPos = this.pos + i - 1;
-                                    this.currentNode.value = fromCharCode(this.uint8Array.subarray(
-                                        this.currentNode.startPos - this.pos,
-                                        this.currentNode.endPos - this.pos + 1));
+                                    this.currentNode.value = this.str.substring(this.currentNode.startPos - this.pos,
+                                        this.currentNode.endPos - this.pos + 1);
                                     this.currentNode = this.currentNode.parentNode;
 
                                     // close out the SECTION
@@ -480,7 +478,7 @@
                         if (i >= len) {
                             throw new Error('Unexpected end of input at position ' + (this.pos + i));
                         }
-                        chr = String.fromCharCode(this.uint8Array[i]);
+                        chr = this.str.charAt(i);
                     }
 
                     /* // skip this check, otherwise the parser might explode on binary input
@@ -547,9 +545,9 @@
                         if (!('literalLength' in this.currentNode)) {
                             throw new Error('Unexpected literal prefix end char } at position ' + (this.pos + i));
                         }
-                        if (this.uint8Array[i + 1] === ASCII_NL) {
+                        if (this.str.charAt(i + 1) === '\n') {
                             i++;
-                        } else if (this.uint8Array[i + 1] === ASCII_CR && this.uint8Array[i + 2] === ASCII_NL) {
+                        } else if (this.str.charAt(i + 1) === '\r' && this.str.charAt(i + 2) === '\n') {
                             i += 2;
                         } else {
                             throw new Error('Unexpected char at position ' + (this.pos + i));
@@ -634,6 +632,8 @@
                     this.currentNode.value += chr;
                     break;
             }
+
+            console.log("end", i, len, chr);
         }
     };
 

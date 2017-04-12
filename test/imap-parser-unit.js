@@ -446,7 +446,7 @@
         });
 
         describe('Human readable', function() {
-            it('should succeed', function() {
+            it('should succeed 1', function() {
                 expect(imapHandler.parser(toArrayBuffer('* OK [CAPABILITY IDLE] Hello world!'))).to.deep.equal({
                     command: 'OK',
                     tag: '*',
@@ -465,7 +465,9 @@
                         value: 'Hello world!'
                     }]
                 });
+            });
 
+            it('should succeed 2', function() {
                 expect(imapHandler.parser(toArrayBuffer('* OK Hello world!'))).to.deep.equal({
                     command: 'OK',
                     tag: '*',
@@ -474,12 +476,16 @@
                         value: 'Hello world!'
                     }]
                 });
+            });
 
+            it('should succeed 3', function() {
                 expect(imapHandler.parser(toArrayBuffer('* OK'))).to.deep.equal({
                     command: 'OK',
                     tag: '*'
                 });
+            });
 
+            it('should succeed 4', function() {
                 // USEATTR is from RFC6154; we are testing that just an ATOM
                 // on its own will parse successfully here.  (All of the
                 // RFC5530 codes are also single atoms.)
@@ -498,7 +504,9 @@
                         value: '\\All not supported'
                     }]
                 });
+            });
 
+            it('should succeed 5', function() {
                 // RFC5267 defines the NOUPDATE error.  Including for quote /
                 // string coverage.
                 expect(imapHandler.parser(toArrayBuffer('* NO [NOUPDATE "B02"] Too many contexts'))).to.deep.equal({
@@ -519,8 +527,9 @@
                         value: 'Too many contexts'
                     }]
                 });
+            });
 
-
+            it('should succeed 6', function() {
                 // RFC5464 defines the METADATA response code; adding this to
                 // ensure the transition for when '2199' hits ']' is handled
                 // safely.
@@ -545,7 +554,9 @@
                         value: 'GETMETADATA complete'
                     }]
                 });
+            });
 
+            it('should succeed 7', function() {
                 // RFC4467 defines URLMECH.  Included because of the example
                 // third atom involves base64-encoding which is somewhat unusual
                 expect(imapHandler.parser(toArrayBuffer('TAG1 OK [URLMECH INTERNAL XSAMPLE=P34OKhO7VEkCbsiYY8rGEg==] done'))).to.deep.equal({
@@ -569,7 +580,9 @@
                         value: 'done'
                     }]
                 });
+            });
 
+            it('should succeed 8', function() {
                 // RFC2221 defines REFERRAL where the argument is an imapurl
                 // (defined by RFC2192 which is obsoleted by RFC5092) which
                 // is significantly more complicated than the rest of the IMAP
@@ -596,7 +609,9 @@
                         value: 'Remote Server'
                     }]
                 });
+            });
 
+            it('should succeed 9', function() {
                 // PERMANENTFLAGS is from RFC3501.  Its syntax is also very
                 // similar to BADCHARSET, except BADCHARSET has astrings
                 // inside the list.
@@ -632,7 +647,9 @@
                         value: 'Flags permitted.'
                     }]
                 });
+            });
 
+            it('should succeed 10', function() {
                 // COPYUID is from RFC4315 and included the previously failing
                 // parsing situation of a sequence terminated by ']' rather than
                 // whitespace.
@@ -660,7 +677,9 @@
                         value: 'COPY completed'
                     }]
                 });
+            });
 
+            it('should succeed 11', function() {
                 // MODIFIED is from RFC4551 and is basically the same situation
                 // as the COPYUID case, but in this case our example sequences
                 // have commas in them.  (Note that if there was no comma, the
