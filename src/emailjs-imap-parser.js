@@ -56,6 +56,35 @@
         return stringArray.join('');
     }
 
+    function fromCharCodeTrimmed(uint8, skip) {
+        var begin = 0;
+        var end = uint8.length;
+
+        while (uint8[begin] === ASCII_SPACE) {
+            begin++;
+        }
+
+        while (uint8[end - 1] === ASCII_SPACE) {
+            end--;
+        }
+
+        if (begin !== 0 || end !== uint8.length) {
+            uint8 = uint8.subarray(begin, end);
+        }
+
+        return fromCharCode(uint8, skip);
+    }
+
+    function isEmpty(uint8) {
+        for (var i = 0; i < uint8.length; i++) {
+            if (uint8[i] !== ASCII_SPACE) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     function ParserInstance(input, options) {
         this.remainder = new Uint8Array(input || 0);
         this.options = options || {};
@@ -83,10 +112,10 @@
 
                 var lastRightBracket = this.remainder.lastIndexOf(ASCII_RIGHT_BRACKET);
                 if (this.remainder[1] === ASCII_LEFT_BRACKET && lastRightBracket > 1) {
-                    this.humanReadable = fromCharCode(this.remainder.subarray(lastRightBracket + 1)).trim(); // todo get rid of trim
+                    this.humanReadable = fromCharCodeTrimmed(this.remainder.subarray(lastRightBracket + 1));
                     this.remainder = this.remainder.subarray(0, lastRightBracket + 1);
                 } else {
-                    this.humanReadable = fromCharCode(this.remainder).trim(); // todo get rid of trim
+                    this.humanReadable = fromCharCodeTrimmed(this.remainder);
                     this.remainder = new Uint8Array(0);
                 }
                 break;
@@ -671,7 +700,7 @@
             response.command += ' ' + parser.getElement(imapFormalSyntax.command());
         }
 
-        if (fromCharCode(parser.remainder).trim().length) {
+        if (!isEmpty(parser.remainder)) {
             parser.getSpace();
             response.attributes = parser.getAttributes();
         }
