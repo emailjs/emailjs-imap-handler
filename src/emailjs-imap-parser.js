@@ -769,11 +769,11 @@
                         if (this.currentNode.equalsAt('*', -1) && !this.currentNode.equalsAt(':', -2)) {
                             throw new Error('Unexpected sequence separator , at position ' + (this.pos + i));
                         }
-                    } else if (!chr.match(/\d/)) {
+                    } else if (!/\d/.test(chr)) {
                         throw new Error('Unexpected char at position ' + (this.pos + i));
                     }
 
-                    if (chr.match(/\d/) && this.currentNode.equalsAt('*', -1)) {
+                    if (/\d/.test(chr) && this.currentNode.equalsAt('*', -1)) {
                         throw new Error('Unexpected number at position ' + (this.pos + i));
                     }
 
