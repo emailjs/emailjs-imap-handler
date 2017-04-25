@@ -191,9 +191,112 @@
         }
     }
 
-    Node.prototype.getValue = function() { // todo don't use getValue all over the place
+    Node.prototype.getValue = function() {
         var value = fromCharCode(this.uint8.subarray(this.valueStart, this.valueEnd), this.valueSkip);
         return this.valueToUpperCase ? value.toUpperCase() : value;
+    };
+
+    // TODO cleanup - see if any of the Node functions below can be merged somehow
+
+    Node.prototype.getValueLength = function() {
+        return this.valueEnd - this.valueStart - this.valueSkip.length;
+    };
+
+    Node.prototype.equals = function(value, caseSensitive) {
+        if (this.getValueLength() !== value.length) {
+            return false;
+        }
+
+        return this.equalsAt(value, 0, caseSensitive);
+    };
+
+    Node.prototype.equalsAt = function(value, index, caseSensitive) {
+        caseSensitive = typeof caseSensitive === 'boolean' ? caseSensitive : true;
+
+        if (index < 0) {
+            index = this.valueEnd + index;
+
+            while (this.valueSkip.indexOf(this.valueStart + index) >= 0) {
+                index--;
+            }
+        } else {
+            index = this.valueStart + index;
+        }
+
+        for (var i = 0; i < value.length; i++) {
+            while (this.valueSkip.indexOf(index - this.valueStart) >= 0) {
+                index++;
+            }
+
+            if (index >= this.valueEnd) {
+                return false;
+            }
+
+            var uint8Char = String.fromCharCode(this.uint8[index]);
+            var char = value[i];
+
+            if (!caseSensitive) {
+                uint8Char = uint8Char.toUpperCase();
+                char = char.toUpperCase();
+            }
+
+            if (uint8Char !== char) {
+                return false;
+            }
+
+            index++;
+        }
+
+        return true;
+    };
+
+    Node.prototype.isNumber = function() {
+        for (var i = 0; i < this.valueEnd - this.valueStart; i++) {
+            if (this.valueSkip.indexOf(i) >= 0) {
+                continue;
+            }
+
+            if (!this.isDigit(i)) {
+                return false;
+            }
+        }
+
+        return true;
+    };
+
+    Node.prototype.isDigit = function(index) {
+        if (index < 0) {
+            index = this.valueEnd + index;
+
+            while (this.valueSkip.indexOf(this.valueStart + index) >= 0) {
+                index--;
+            }
+        } else {
+            index = this.valueStart + index;
+
+            while (this.valueSkip.indexOf(this.valueStart + index) >= 0) {
+                index++;
+            }
+        }
+
+        var ascii = this.uint8[index];
+        return ascii >= 48 && ascii <= 57;
+    };
+
+    Node.prototype.containsChar = function(char) {
+        var ascii = char.charCodeAt(0);
+
+        for (var i = this.valueStart; i < this.valueEnd; i++) {
+            if (this.valueSkip.indexOf(i - this.valueStart) >= 0) {
+                continue;
+            }
+
+            if (this.uint8[i] === ascii) {
+                return true;
+            }
+        }
+
+        return false;
     };
 
 
@@ -220,7 +323,7 @@
             var elm, curBranch = branch,
                 partial;
 
-            if (!node.closed && node.type === 'SEQUENCE' && node.getValue() === '*') {
+            if (!node.closed && node.type === 'SEQUENCE' && node.equals('*')) {
                 node.closed = true;
                 node.type = 'ATOM';
             }
@@ -241,7 +344,7 @@
                     branch.push(elm);
                     break;
                 case 'ATOM':
-                    if (node.getValue().toUpperCase() === 'NIL') {
+                    if (node.equals('NIL', true)) {
                         branch.push(null);
                         break;
                     }
@@ -472,14 +575,14 @@
                         break;
                     }
 
-                    if ((chr === ',' || chr === ':') && this.currentNode.getValue().match(/^\d+$/)) {
+                    if ((chr === ',' || chr === ':') && this.currentNode.isNumber()) {
                         this.currentNode.type = 'SEQUENCE';
                         this.currentNode.closed = true;
                         this.state = 'SEQUENCE';
                     }
 
                     // [ starts a section group for this element
-                    if (chr === '[' && ['BODY', 'BODY.PEEK'].indexOf(this.currentNode.getValue().toUpperCase()) >= 0) {
+                    if (chr === '[' && (this.currentNode.equals('BODY', false) || this.currentNode.equals('BODY.PEEK', false))) {
                         this.currentNode.endPos = this.pos + i;
                         this.currentNode = this.createNode(this.currentNode.parentNode, this.pos + i);
                         this.currentNode.type = 'SECTION';
@@ -493,9 +596,9 @@
                     }
 
                     // if the char is not ATOM compatible, throw. Allow \* as an exception
-                    if (imapFormalSyntax['ATOM-CHAR']().indexOf(chr) < 0 && chr !== ']' && !(chr === '*' && this.currentNode.getValue() === '\\')) {
+                    if (imapFormalSyntax['ATOM-CHAR']().indexOf(chr) < 0 && chr !== ']' && !(chr === '*' && this.currentNode.equals('\\'))) {
                         throw new Error('Unexpected char at position ' + (this.pos + i));
-                    } else if (this.currentNode.getValue() === '\\*') {
+                    } else if (this.currentNode.equals('\\*')) {
                         throw new Error('Unexpected char at position ' + (this.pos + i));
                     }
 
@@ -536,7 +639,7 @@
 
                 case 'PARTIAL':
                     if (chr === '>') {
-                        if (this.currentNode.getValue().substr(-1) === '.') {
+                        if (this.currentNode.equalsAt('.', -1)) {
                             throw new Error('Unexpected end of partial at position ' + this.pos);
                         }
                         this.currentNode.endPos = this.pos + i;
@@ -547,7 +650,7 @@
                         break;
                     }
 
-                    if (chr === '.' && (!this.currentNode.getValue().length || this.currentNode.getValue().match(/\./))) {
+                    if (chr === '.' && (!this.currentNode.getValueLength() || this.currentNode.containsChar("."))) {
                         throw new Error('Unexpected partial separator . at position ' + this.pos);
                     }
 
@@ -555,7 +658,7 @@
                         throw new Error('Unexpected char at position ' + (this.pos + i));
                     }
 
-                    if (this.currentNode.getValue().match(/^0$|\.0$/) && chr !== '.') {
+                    if (chr !== '.' && (this.currentNode.equals('0') || this.currentNode.equalsAt('.0', -2))) {
                         throw new Error('Invalid partial at position ' + (this.pos + i));
                     }
 
@@ -570,7 +673,7 @@
                         }
                         this.currentNode.valueEnd = i + 1;
 
-                        if (this.currentNode.getValue().length >= this.currentNode.literalLength) {
+                        if (this.currentNode.getValueLength() >= this.currentNode.literalLength) {
                             this.currentNode.endPos = this.pos + i;
                             this.currentNode.closed = true;
                             this.currentNode = this.currentNode.parentNode;
@@ -623,11 +726,11 @@
                 case 'SEQUENCE':
                     // space finishes the sequence set
                     if (chr === ' ') {
-                        if (!this.currentNode.getValue().substr(-1).match(/\d/) && this.currentNode.getValue().substr(-1) !== '*') {
+                        if (!this.currentNode.isDigit(-1) && !this.currentNode.equalsAt('*', -1)) {
                             throw new Error('Unexpected whitespace at position ' + (this.pos + i));
                         }
 
-                        if (this.currentNode.getValue().substr(-1) === '*' && this.currentNode.getValue().substr(-2, 1) !== ':') {
+                        if (this.currentNode.equalsAt('*', -1) && !this.currentNode.equalsAt(':', -2)) {
                             throw new Error('Unexpected whitespace at position ' + (this.pos + i));
                         }
 
@@ -652,25 +755,25 @@
                     }
 
                     if (chr === ':') {
-                        if (!this.currentNode.getValue().substr(-1).match(/\d/) && this.currentNode.getValue().substr(-1) !== '*') {
+                        if (!this.currentNode.isDigit(-1) && !this.currentNode.equalsAt('*', -1)) {
                             throw new Error('Unexpected range separator : at position ' + (this.pos + i));
                         }
                     } else if (chr === '*') {
-                        if ([',', ':'].indexOf(this.currentNode.getValue().substr(-1)) < 0) {
+                        if (!this.currentNode.equalsAt(',', -1) && !this.currentNode.equalsAt(':', -1)) {
                             throw new Error('Unexpected range wildcard at position ' + (this.pos + i));
                         }
                     } else if (chr === ',') {
-                        if (!this.currentNode.getValue().substr(-1).match(/\d/) && this.currentNode.getValue().substr(-1) !== '*') {
+                        if (!this.currentNode.isDigit(-1) && !this.currentNode.equalsAt('*', -1)) {
                             throw new Error('Unexpected sequence separator , at position ' + (this.pos + i));
                         }
-                        if (this.currentNode.getValue().substr(-1) === '*' && this.currentNode.getValue().substr(-2, 1) !== ':') {
+                        if (this.currentNode.equalsAt('*', -1) && !this.currentNode.equalsAt(':', -2)) {
                             throw new Error('Unexpected sequence separator , at position ' + (this.pos + i));
                         }
                     } else if (!chr.match(/\d/)) {
                         throw new Error('Unexpected char at position ' + (this.pos + i));
                     }
 
-                    if (chr.match(/\d/) && this.currentNode.getValue().substr(-1) === '*') {
+                    if (chr.match(/\d/) && this.currentNode.equalsAt('*', -1)) {
                         throw new Error('Unexpected number at position ' + (this.pos + i));
                     }
 
