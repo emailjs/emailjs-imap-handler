@@ -176,6 +176,27 @@
         return new TokenParser(this, this.pos, this.remainder.subarray(), this.options).getAttributes();
     };
 
+    function Node(uint8, parentNode, startPos) {
+        this.uint8 = uint8;
+        this.childNodes = [];
+        this.type = false;
+        this.closed = true;
+        this.valueSkip = [];
+        this.startPos = startPos;
+        this.valueStart = this.valueEnd = typeof startPos === 'number' ? startPos + 1 : 0;
+
+        if (parentNode) {
+            this.parentNode = parentNode;
+            parentNode.childNodes.push(this);
+        }
+    }
+
+    Node.prototype.getValue = function() { // todo don't use getValue all over the place
+        var value = fromCharCode(this.uint8.subarray(this.valueStart, this.valueEnd), this.valueSkip);
+        return this.valueToUpperCase ? value.toUpperCase() : value;
+    };
+
+
     function TokenParser(parent, startPos, uint8Array, options) {
         this.uint8Array = uint8Array;
         this.options = options || {};
@@ -256,32 +277,7 @@
     };
 
     TokenParser.prototype.createNode = function(parentNode, startPos) {
-        var node = {
-            childNodes: [],
-            type: false,
-            closed: true,
-            valueSkip: []
-        };
-
-        if (parentNode) {
-            node.parentNode = parentNode;
-        }
-
-        node.startPos = this.pos + startPos;
-        node.valueStart = node.valueEnd = typeof startPos === 'number' ? startPos + 1 : 0;
-
-        if (parentNode) {
-            parentNode.childNodes.push(node);
-        }
-
-        var tokenParser = this;
-
-        node.getValue = function() {
-            var value = fromCharCode(tokenParser.uint8Array.subarray(this.valueStart, this.valueEnd), this.valueSkip);
-            return this.valueToUpperCase ? value.toUpperCase() : value;
-        };
-
-        return node;
+        return new Node(this.uint8Array, parentNode, startPos);
     };
 
     TokenParser.prototype.processString = function() {
@@ -401,7 +397,7 @@
                                 // (and crazy) term, we just specialize that case here.
                                 if (fromCharCode(this.uint8Array.subarray(i + 1, i + 10)).toUpperCase() === 'REFERRAL ') {
                                     // create the REFERRAL atom
-                                    this.currentNode = this.createNode(this.currentNode, i + 1);
+                                    this.currentNode = this.createNode(this.currentNode, this.pos + i + 1);
                                     this.currentNode.type = 'ATOM';
                                     this.currentNode.endPos = this.pos + i + 8;
                                     this.currentNode.valueStart = i + 1;
@@ -410,7 +406,7 @@
                                     this.currentNode = this.currentNode.parentNode;
 
                                     // eat all the way through the ] to be the  IMAPURL token.
-                                    this.currentNode = this.createNode(this.currentNode, i + 10);
+                                    this.currentNode = this.createNode(this.currentNode, this.pos + i + 10);
                                     // just call this an ATOM, even though IMAPURL might be more correct
                                     this.currentNode.type = 'ATOM';
                                     // jump i to the ']'
