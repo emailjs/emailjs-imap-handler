@@ -38,46 +38,46 @@
     var ASCII_LEFT_BRACKET = 91;
     var ASCII_RIGHT_BRACKET = 93;
 
-    function fromCharCode(uint8, skip) {
+    function fromCharCode(uint8Array, skip) {
         skip = skip || [];
-        var actualLength = uint8.length - skip.length;
+        var actualLength = uint8Array.length - skip.length;
         if (actualLength === 0) {
             return ''; // Otherwise the join below will return 0, not ''
         }
         var stringArray = [actualLength];
         var skipped = 0;
-        for (var i = 0; i < uint8.length; i++) {
+        for (var i = 0; i < uint8Array.length; i++) {
             if (skip.indexOf(i) >= 0) {
                 skipped++;
             } else {
-                stringArray[i - skipped] = String.fromCharCode(uint8[i]);
+                stringArray[i - skipped] = String.fromCharCode(uint8Array[i]);
             }
         }
         return stringArray.join('');
     }
 
-    function fromCharCodeTrimmed(uint8, skip) {
+    function fromCharCodeTrimmed(uint8Array, skip) {
         var begin = 0;
-        var end = uint8.length;
+        var end = uint8Array.length;
 
-        while (uint8[begin] === ASCII_SPACE) {
+        while (uint8Array[begin] === ASCII_SPACE) {
             begin++;
         }
 
-        while (uint8[end - 1] === ASCII_SPACE) {
+        while (uint8Array[end - 1] === ASCII_SPACE) {
             end--;
         }
 
-        if (begin !== 0 || end !== uint8.length) {
-            uint8 = uint8.subarray(begin, end);
+        if (begin !== 0 || end !== uint8Array.length) {
+            uint8Array = uint8Array.subarray(begin, end);
         }
 
-        return fromCharCode(uint8, skip);
+        return fromCharCode(uint8Array, skip);
     }
 
-    function isEmpty(uint8) {
-        for (var i = 0; i < uint8.length; i++) {
-            if (uint8[i] !== ASCII_SPACE) {
+    function isEmpty(uint8Array) {
+        for (var i = 0; i < uint8Array.length; i++) {
+            if (uint8Array[i] !== ASCII_SPACE) {
                 return false;
             }
         }
@@ -176,8 +176,8 @@
         return new TokenParser(this, this.pos, this.remainder.subarray(), this.options).getAttributes();
     };
 
-    function Node(uint8, parentNode, startPos) {
-        this.uint8 = uint8;
+    function Node(uint8Array, parentNode, startPos) {
+        this.uint8Array = uint8Array;
         this.childNodes = [];
         this.type = false;
         this.closed = true;
@@ -192,11 +192,9 @@
     }
 
     Node.prototype.getValue = function() {
-        var value = fromCharCode(this.uint8.subarray(this.valueStart, this.valueEnd), this.valueSkip);
+        var value = fromCharCode(this.uint8Array.subarray(this.valueStart, this.valueEnd), this.valueSkip);
         return this.valueToUpperCase ? value.toUpperCase() : value;
     };
-
-    // TODO cleanup - see if any of the Node functions below can be merged somehow
 
     Node.prototype.getValueLength = function() {
         return this.valueEnd - this.valueStart - this.valueSkip.length;
@@ -232,7 +230,7 @@
                 return false;
             }
 
-            var uint8Char = String.fromCharCode(this.uint8[index]);
+            var uint8Char = String.fromCharCode(this.uint8Array[index]);
             var char = value[i];
 
             if (!caseSensitive) {
@@ -279,7 +277,7 @@
             }
         }
 
-        var ascii = this.uint8[index];
+        var ascii = this.uint8Array[index];
         return ascii >= 48 && ascii <= 57;
     };
 
@@ -291,7 +289,7 @@
                 continue;
             }
 
-            if (this.uint8[i] === ascii) {
+            if (this.uint8Array[i] === ascii) {
                 return true;
             }
         }
@@ -394,7 +392,7 @@
 
         for (i = 0, len = this.uint8Array.length; i < len; i++) {
 
-            var chr = String.fromCharCode(this.uint8Array[i]); // todo not use fromCharCode at this point
+            var chr = String.fromCharCode(this.uint8Array[i]);
 
             switch (this.state) {
 
@@ -783,12 +781,12 @@
         }
     };
 
-    return function(command, options) {
+    return function(buffers, options) {
         var parser, response = {};
 
         options = options || {};
 
-        parser = new ParserInstance(command, options);
+        parser = new ParserInstance(buffers, options);
 
         response.tag = parser.getTag();
         parser.getSpace();
