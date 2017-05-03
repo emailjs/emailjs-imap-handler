@@ -40,20 +40,22 @@
 
     function fromCharCode(uint8Array, skip) {
         skip = skip || [];
-        var actualLength = uint8Array.length - skip.length;
-        if (actualLength === 0) {
-            return ''; // Otherwise the join below will return 0, not ''
-        }
-        var stringArray = [actualLength];
-        var skipped = 0;
+        var max = 10240;
+        var begin = 0;
+        var strings = [];
+
         for (var i = 0; i < uint8Array.length; i++) {
             if (skip.indexOf(i) >= 0) {
-                skipped++;
-            } else {
-                stringArray[i - skipped] = String.fromCharCode(uint8Array[i]);
+                strings.push(String.fromCharCode.apply(null, uint8Array.subarray(begin, i)));
+                begin = i + 1;
+            } else if (i - begin >= max) {
+                strings.push(String.fromCharCode.apply(null, uint8Array.subarray(begin, i)));
+                begin = i;
             }
         }
-        return stringArray.join('');
+        strings.push(String.fromCharCode.apply(null, uint8Array.subarray(begin, i)));
+
+        return strings.join('');
     }
 
     function fromCharCodeTrimmed(uint8Array, skip) {
