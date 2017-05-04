@@ -32,10 +32,64 @@
 
     'use strict';
 
+    var ASCII_NL = 10;
+    var ASCII_CR = 13;
+    var ASCII_SPACE = 32;
+    var ASCII_LEFT_BRACKET = 91;
+    var ASCII_RIGHT_BRACKET = 93;
+
+    function fromCharCode(uint8Array, skip) {
+        skip = skip || [];
+        var max = 10240;
+        var begin = 0;
+        var strings = [];
+
+        for (var i = 0; i < uint8Array.length; i++) {
+            if (skip.indexOf(i) >= 0) {
+                strings.push(String.fromCharCode.apply(null, uint8Array.subarray(begin, i)));
+                begin = i + 1;
+            } else if (i - begin >= max) {
+                strings.push(String.fromCharCode.apply(null, uint8Array.subarray(begin, i)));
+                begin = i;
+            }
+        }
+        strings.push(String.fromCharCode.apply(null, uint8Array.subarray(begin, i)));
+
+        return strings.join('');
+    }
+
+    function fromCharCodeTrimmed(uint8Array, skip) {
+        var begin = 0;
+        var end = uint8Array.length;
+
+        while (uint8Array[begin] === ASCII_SPACE) {
+            begin++;
+        }
+
+        while (uint8Array[end - 1] === ASCII_SPACE) {
+            end--;
+        }
+
+        if (begin !== 0 || end !== uint8Array.length) {
+            uint8Array = uint8Array.subarray(begin, end);
+        }
+
+        return fromCharCode(uint8Array, skip);
+    }
+
+    function isEmpty(uint8Array) {
+        for (var i = 0; i < uint8Array.length; i++) {
+            if (uint8Array[i] !== ASCII_SPACE) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     function ParserInstance(input, options) {
-        this.input = (input || '').toString();
+        this.remainder = new Uint8Array(input || 0);
         this.options = options || {};
-        this.remainder = this.input;
         this.pos = 0;
     }
 
@@ -47,8 +101,6 @@
     };
 
     ParserInstance.prototype.getCommand = function() {
-        var responseCode;
-
         if (!this.command) {
             this.command = this.getElement(imapFormalSyntax.command());
         }
@@ -59,13 +111,14 @@
             case 'BAD':
             case 'PREAUTH':
             case 'BYE':
-                responseCode = this.remainder.match(/^ \[(?:[^\]]*\])+/);
-                if (responseCode) {
-                    this.humanReadable = this.remainder.substr(responseCode[0].length).trim();
-                    this.remainder = responseCode[0];
+
+                var lastRightBracket = this.remainder.lastIndexOf(ASCII_RIGHT_BRACKET);
+                if (this.remainder[1] === ASCII_LEFT_BRACKET && lastRightBracket > 1) {
+                    this.humanReadable = fromCharCodeTrimmed(this.remainder.subarray(lastRightBracket + 1));
+                    this.remainder = this.remainder.subarray(0, lastRightBracket + 1);
                 } else {
-                    this.humanReadable = this.remainder.trim();
-                    this.remainder = '';
+                    this.humanReadable = fromCharCodeTrimmed(this.remainder);
+                    this.remainder = new Uint8Array(0);
                 }
                 break;
         }
@@ -74,13 +127,18 @@
     };
 
     ParserInstance.prototype.getElement = function(syntax) {
-        var match, element, errPos;
-        if (this.remainder.match(/^\s/)) {
+        var element, errPos;
+        if (this.remainder[0] === ASCII_SPACE) {
             throw new Error('Unexpected whitespace at position ' + this.pos);
         }
 
-        if ((match = this.remainder.match(/^[^\s]+(?=\s|$)/))) {
-            element = match[0];
+        var firstSpace = this.remainder.indexOf(ASCII_SPACE);
+        if (this.remainder.length > 0 && firstSpace !== 0) {
+            if (firstSpace === -1) {
+                element = fromCharCode(this.remainder);
+            } else {
+                element = fromCharCode(this.remainder.subarray(0, firstSpace));
+            }
 
             if ((errPos = imapFormalSyntax.verify(element, syntax)) >= 0) {
                 throw new Error('Unexpected char at position ' + (this.pos + errPos));
@@ -89,8 +147,8 @@
             throw new Error('Unexpected end of input at position ' + this.pos);
         }
 
-        this.pos += match[0].length;
-        this.remainder = this.remainder.substr(match[0].length);
+        this.pos += element.length;
+        this.remainder = this.remainder.subarray(element.length);
 
         return element;
     };
@@ -100,12 +158,12 @@
             throw new Error('Unexpected end of input at position ' + this.pos);
         }
 
-        if (imapFormalSyntax.verify(this.remainder.charAt(0), imapFormalSyntax.SP()) >= 0) {
+        if (imapFormalSyntax.verify(String.fromCharCode(this.remainder[0]), imapFormalSyntax.SP()) >= 0) {
             throw new Error('Unexpected char at position ' + this.pos);
         }
 
         this.pos++;
-        this.remainder = this.remainder.substr(1);
+        this.remainder = this.remainder.subarray(1);
     };
 
     ParserInstance.prototype.getAttributes = function() {
@@ -113,15 +171,137 @@
             throw new Error('Unexpected end of input at position ' + this.pos);
         }
 
-        if (this.remainder.match(/^\s/)) {
+        if (this.remainder[0] === ASCII_SPACE) {
             throw new Error('Unexpected whitespace at position ' + this.pos);
         }
 
-        return new TokenParser(this, this.pos, this.remainder, this.options).getAttributes();
+        return new TokenParser(this, this.pos, this.remainder.subarray(), this.options).getAttributes();
     };
 
-    function TokenParser(parent, startPos, str, options) {
-        this.str = (str || '').toString();
+    function Node(uint8Array, parentNode, startPos) {
+        this.uint8Array = uint8Array;
+        this.childNodes = [];
+        this.type = false;
+        this.closed = true;
+        this.valueSkip = [];
+        this.startPos = startPos;
+        this.valueStart = this.valueEnd = typeof startPos === 'number' ? startPos + 1 : 0;
+
+        if (parentNode) {
+            this.parentNode = parentNode;
+            parentNode.childNodes.push(this);
+        }
+    }
+
+    Node.prototype.getValue = function() {
+        var value = fromCharCode(this.uint8Array.subarray(this.valueStart, this.valueEnd), this.valueSkip);
+        return this.valueToUpperCase ? value.toUpperCase() : value;
+    };
+
+    Node.prototype.getValueLength = function() {
+        return this.valueEnd - this.valueStart - this.valueSkip.length;
+    };
+
+    Node.prototype.equals = function(value, caseSensitive) {
+        if (this.getValueLength() !== value.length) {
+            return false;
+        }
+
+        return this.equalsAt(value, 0, caseSensitive);
+    };
+
+    Node.prototype.equalsAt = function(value, index, caseSensitive) {
+        caseSensitive = typeof caseSensitive === 'boolean' ? caseSensitive : true;
+
+        if (index < 0) {
+            index = this.valueEnd + index;
+
+            while (this.valueSkip.indexOf(this.valueStart + index) >= 0) {
+                index--;
+            }
+        } else {
+            index = this.valueStart + index;
+        }
+
+        for (var i = 0; i < value.length; i++) {
+            while (this.valueSkip.indexOf(index - this.valueStart) >= 0) {
+                index++;
+            }
+
+            if (index >= this.valueEnd) {
+                return false;
+            }
+
+            var uint8Char = String.fromCharCode(this.uint8Array[index]);
+            var char = value[i];
+
+            if (!caseSensitive) {
+                uint8Char = uint8Char.toUpperCase();
+                char = char.toUpperCase();
+            }
+
+            if (uint8Char !== char) {
+                return false;
+            }
+
+            index++;
+        }
+
+        return true;
+    };
+
+    Node.prototype.isNumber = function() {
+        for (var i = 0; i < this.valueEnd - this.valueStart; i++) {
+            if (this.valueSkip.indexOf(i) >= 0) {
+                continue;
+            }
+
+            if (!this.isDigit(i)) {
+                return false;
+            }
+        }
+
+        return true;
+    };
+
+    Node.prototype.isDigit = function(index) {
+        if (index < 0) {
+            index = this.valueEnd + index;
+
+            while (this.valueSkip.indexOf(this.valueStart + index) >= 0) {
+                index--;
+            }
+        } else {
+            index = this.valueStart + index;
+
+            while (this.valueSkip.indexOf(this.valueStart + index) >= 0) {
+                index++;
+            }
+        }
+
+        var ascii = this.uint8Array[index];
+        return ascii >= 48 && ascii <= 57;
+    };
+
+    Node.prototype.containsChar = function(char) {
+        var ascii = char.charCodeAt(0);
+
+        for (var i = this.valueStart; i < this.valueEnd; i++) {
+            if (this.valueSkip.indexOf(i - this.valueStart) >= 0) {
+                continue;
+            }
+
+            if (this.uint8Array[i] === ascii) {
+                return true;
+            }
+        }
+
+        return false;
+    };
+
+
+    function TokenParser(parent, startPos, uint8Array, options) {
+        this.uint8Array = uint8Array;
         this.options = options || {};
         this.parent = parent;
 
@@ -143,14 +323,14 @@
             var elm, curBranch = branch,
                 partial;
 
-            if (!node.closed && node.type === 'SEQUENCE' && node.value === '*') {
+            if (!node.closed && node.type === 'SEQUENCE' && node.equals('*')) {
                 node.closed = true;
                 node.type = 'ATOM';
             }
 
             // If the node was never closed, throw it
             if (!node.closed) {
-                throw new Error('Unexpected end of input at position ' + (this.pos + this.str.length - 1));
+                throw new Error('Unexpected end of input at position ' + (this.pos + this.uint8Array.length - 1));
             }
 
             switch (node.type.toUpperCase()) {
@@ -159,18 +339,18 @@
                 case 'SEQUENCE':
                     elm = {
                         type: node.type.toUpperCase(),
-                        value: node.value
+                        value: node.getValue()
                     };
                     branch.push(elm);
                     break;
                 case 'ATOM':
-                    if (node.value.toUpperCase() === 'NIL') {
+                    if (node.equals('NIL', true)) {
                         branch.push(null);
                         break;
                     }
                     elm = {
                         type: node.type.toUpperCase(),
-                        value: node.value
+                        value: node.getValue()
                     };
                     branch.push(elm);
                     break;
@@ -183,7 +363,7 @@
                     branch = elm;
                     break;
                 case 'PARTIAL':
-                    partial = node.value.split('.').map(Number);
+                    partial = node.getValue().split('.').map(Number);
                     branch[branch.length - 1].partial = partial;
                     break;
             }
@@ -200,40 +380,21 @@
     };
 
     TokenParser.prototype.createNode = function(parentNode, startPos) {
-        var node = {
-            childNodes: [],
-            type: false,
-            value: '',
-            closed: true
-        };
-
-        if (parentNode) {
-            node.parentNode = parentNode;
-        }
-
-        if (typeof startPos === 'number') {
-            node.startPos = startPos;
-        }
-
-        if (parentNode) {
-            parentNode.childNodes.push(node);
-        }
-
-        return node;
+        return new Node(this.uint8Array, parentNode, startPos);
     };
 
     TokenParser.prototype.processString = function() {
-        var chr, i, len,
+        var i, len,
             checkSP = function() {
                 // jump to the next non whitespace pos
-                while (this.str.charAt(i + 1) === ' ') {
+                while (this.uint8Array[i + 1] === ' ') {
                     i++;
                 }
             }.bind(this);
 
-        for (i = 0, len = this.str.length; i < len; i++) {
+        for (i = 0, len = this.uint8Array.length; i < len; i++) {
 
-            chr = this.str.charAt(i);
+            var chr = String.fromCharCode(this.uint8Array[i]);
 
             switch (this.state) {
 
@@ -243,7 +404,7 @@
 
                         // DQUOTE starts a new string
                         case '"':
-                            this.currentNode = this.createNode(this.currentNode, this.pos + i);
+                            this.currentNode = this.createNode(this.currentNode, i);
                             this.currentNode.type = 'string';
                             this.state = 'STRING';
                             this.currentNode.closed = false;
@@ -251,7 +412,7 @@
 
                             // ( starts a new list
                         case '(':
-                            this.currentNode = this.createNode(this.currentNode, this.pos + i);
+                            this.currentNode = this.createNode(this.currentNode, i);
                             this.currentNode.type = 'LIST';
                             this.currentNode.closed = false;
                             break;
@@ -282,13 +443,14 @@
 
                             // < starts a new partial
                         case '<':
-                            if (this.str.charAt(i - 1) !== ']') {
-                                this.currentNode = this.createNode(this.currentNode, this.pos + i);
+                            if (String.fromCharCode(this.uint8Array[i - 1]) !== ']') {
+                                this.currentNode = this.createNode(this.currentNode, i);
                                 this.currentNode.type = 'ATOM';
-                                this.currentNode.value = chr;
+                                this.currentNode.valueStart = i;
+                                this.currentNode.valueEnd = i + 1;
                                 this.state = 'ATOM';
                             } else {
-                                this.currentNode = this.createNode(this.currentNode, this.pos + i);
+                                this.currentNode = this.createNode(this.currentNode, i);
                                 this.currentNode.type = 'PARTIAL';
                                 this.state = 'PARTIAL';
                                 this.currentNode.closed = false;
@@ -297,7 +459,7 @@
 
                             // { starts a new literal
                         case '{':
-                            this.currentNode = this.createNode(this.currentNode, this.pos + i);
+                            this.currentNode = this.createNode(this.currentNode, i);
                             this.currentNode.type = 'LITERAL';
                             this.state = 'LITERAL';
                             this.currentNode.closed = false;
@@ -305,9 +467,10 @@
 
                             // ( starts a new sequence
                         case '*':
-                            this.currentNode = this.createNode(this.currentNode, this.pos + i);
+                            this.currentNode = this.createNode(this.currentNode, i);
                             this.currentNode.type = 'SEQUENCE';
-                            this.currentNode.value = chr;
+                            this.currentNode.valueStart = i;
+                            this.currentNode.valueEnd = i + 1;
                             this.currentNode.closed = false;
                             this.state = 'SEQUENCE';
                             break;
@@ -323,10 +486,10 @@
                             if (['OK', 'NO', 'BAD', 'BYE', 'PREAUTH'].indexOf(this.parent.command.toUpperCase()) >= 0 && this.currentNode === this.tree) {
                                 this.currentNode.endPos = this.pos + i;
 
-                                this.currentNode = this.createNode(this.currentNode, this.pos + i);
+                                this.currentNode = this.createNode(this.currentNode, i);
                                 this.currentNode.type = 'ATOM';
 
-                                this.currentNode = this.createNode(this.currentNode, this.pos + i);
+                                this.currentNode = this.createNode(this.currentNode, i);
                                 this.currentNode.type = 'SECTION';
                                 this.currentNode.closed = false;
                                 this.state = 'NORMAL';
@@ -335,12 +498,14 @@
                                 // RFC2192/RFC5092 imapurl that we will try to parse as an ATOM but
                                 // fail quite badly at parsing.  Since the imapurl is such a unique
                                 // (and crazy) term, we just specialize that case here.
-                                if (this.str.substr(i + 1, 9).toUpperCase() === 'REFERRAL ') {
+                                if (fromCharCode(this.uint8Array.subarray(i + 1, i + 10)).toUpperCase() === 'REFERRAL ') {
                                     // create the REFERRAL atom
                                     this.currentNode = this.createNode(this.currentNode, this.pos + i + 1);
                                     this.currentNode.type = 'ATOM';
                                     this.currentNode.endPos = this.pos + i + 8;
-                                    this.currentNode.value = 'REFERRAL';
+                                    this.currentNode.valueStart = i + 1;
+                                    this.currentNode.valueEnd = i + 9;
+                                    this.currentNode.valueToUpperCase = true;
                                     this.currentNode = this.currentNode.parentNode;
 
                                     // eat all the way through the ] to be the  IMAPURL token.
@@ -348,10 +513,10 @@
                                     // just call this an ATOM, even though IMAPURL might be more correct
                                     this.currentNode.type = 'ATOM';
                                     // jump i to the ']'
-                                    i = this.str.indexOf(']', i + 10);
+                                    i = this.uint8Array.indexOf(ASCII_RIGHT_BRACKET, i + 10);
                                     this.currentNode.endPos = this.pos + i - 1;
-                                    this.currentNode.value = this.str.substring(this.currentNode.startPos - this.pos,
-                                        this.currentNode.endPos - this.pos + 1);
+                                    this.currentNode.valueStart = this.currentNode.startPos - this.pos;
+                                    this.currentNode.valueEnd = this.currentNode.endPos - this.pos + 1;
                                     this.currentNode = this.currentNode.parentNode;
 
                                     // close out the SECTION
@@ -371,9 +536,10 @@
                                 throw new Error('Unexpected char at position ' + (this.pos + i));
                             }
 
-                            this.currentNode = this.createNode(this.currentNode, this.pos + i);
+                            this.currentNode = this.createNode(this.currentNode, i);
                             this.currentNode.type = 'ATOM';
-                            this.currentNode.value = chr;
+                            this.currentNode.valueStart = i;
+                            this.currentNode.valueEnd = i + 1;
                             this.state = 'ATOM';
                             break;
                     }
@@ -409,14 +575,14 @@
                         break;
                     }
 
-                    if ((chr === ',' || chr === ':') && this.currentNode.value.match(/^\d+$/)) {
+                    if ((chr === ',' || chr === ':') && this.currentNode.isNumber()) {
                         this.currentNode.type = 'SEQUENCE';
                         this.currentNode.closed = true;
                         this.state = 'SEQUENCE';
                     }
 
                     // [ starts a section group for this element
-                    if (chr === '[' && ['BODY', 'BODY.PEEK'].indexOf(this.currentNode.value.toUpperCase()) >= 0) {
+                    if (chr === '[' && (this.currentNode.equals('BODY', false) || this.currentNode.equals('BODY.PEEK', false))) {
                         this.currentNode.endPos = this.pos + i;
                         this.currentNode = this.createNode(this.currentNode.parentNode, this.pos + i);
                         this.currentNode.type = 'SECTION';
@@ -430,13 +596,13 @@
                     }
 
                     // if the char is not ATOM compatible, throw. Allow \* as an exception
-                    if (imapFormalSyntax['ATOM-CHAR']().indexOf(chr) < 0 && chr !== ']' && !(chr === '*' && this.currentNode.value === '\\')) {
+                    if (imapFormalSyntax['ATOM-CHAR']().indexOf(chr) < 0 && chr !== ']' && !(chr === '*' && this.currentNode.equals('\\'))) {
                         throw new Error('Unexpected char at position ' + (this.pos + i));
-                    } else if (this.currentNode.value === '\\*') {
+                    } else if (this.currentNode.equals('\\*')) {
                         throw new Error('Unexpected char at position ' + (this.pos + i));
                     }
 
-                    this.currentNode.value += chr;
+                    this.currentNode.valueEnd = i + 1;
                     break;
 
                 case 'STRING':
@@ -454,11 +620,12 @@
 
                     // \ Escapes the following char
                     if (chr === '\\') {
+                        this.currentNode.valueSkip.push(i - this.currentNode.valueStart);
                         i++;
                         if (i >= len) {
                             throw new Error('Unexpected end of input at position ' + (this.pos + i));
                         }
-                        chr = this.str.charAt(i);
+                        chr = String.fromCharCode(this.uint8Array[i]);
                     }
 
                     /* // skip this check, otherwise the parser might explode on binary input
@@ -467,12 +634,12 @@
                     }
                     */
 
-                    this.currentNode.value += chr;
+                    this.currentNode.valueEnd = i + 1;
                     break;
 
                 case 'PARTIAL':
                     if (chr === '>') {
-                        if (this.currentNode.value.substr(-1) === '.') {
+                        if (this.currentNode.equalsAt('.', -1)) {
                             throw new Error('Unexpected end of partial at position ' + this.pos);
                         }
                         this.currentNode.endPos = this.pos + i;
@@ -483,7 +650,7 @@
                         break;
                     }
 
-                    if (chr === '.' && (!this.currentNode.value.length || this.currentNode.value.match(/\./))) {
+                    if (chr === '.' && (!this.currentNode.getValueLength() || this.currentNode.containsChar("."))) {
                         throw new Error('Unexpected partial separator . at position ' + this.pos);
                     }
 
@@ -491,11 +658,11 @@
                         throw new Error('Unexpected char at position ' + (this.pos + i));
                     }
 
-                    if (this.currentNode.value.match(/^0$|\.0$/) && chr !== '.') {
+                    if (chr !== '.' && (this.currentNode.equals('0') || this.currentNode.equalsAt('.0', -2))) {
                         throw new Error('Invalid partial at position ' + (this.pos + i));
                     }
 
-                    this.currentNode.value += chr;
+                    this.currentNode.valueEnd = i + 1;
                     break;
 
                 case 'LITERAL':
@@ -504,9 +671,9 @@
                         if (chr === '\u0000') {
                             throw new Error('Unexpected \\x00 at position ' + (this.pos + i));
                         }
-                        this.currentNode.value += chr;
+                        this.currentNode.valueEnd = i + 1;
 
-                        if (this.currentNode.value.length >= this.currentNode.literalLength) {
+                        if (this.currentNode.getValueLength() >= this.currentNode.literalLength) {
                             this.currentNode.endPos = this.pos + i;
                             this.currentNode.closed = true;
                             this.currentNode = this.currentNode.parentNode;
@@ -525,13 +692,14 @@
                         if (!('literalLength' in this.currentNode)) {
                             throw new Error('Unexpected literal prefix end char } at position ' + (this.pos + i));
                         }
-                        if (this.str.charAt(i + 1) === '\n') {
+                        if (this.uint8Array[i + 1] === ASCII_NL) {
                             i++;
-                        } else if (this.str.charAt(i + 1) === '\r' && this.str.charAt(i + 2) === '\n') {
+                        } else if (this.uint8Array[i + 1] === ASCII_CR && this.uint8Array[i + 2] === ASCII_NL) {
                             i += 2;
                         } else {
                             throw new Error('Unexpected char at position ' + (this.pos + i));
                         }
+                        this.currentNode.valueStart = i + 1;
                         this.currentNode.literalLength = Number(this.currentNode.literalLength);
                         this.currentNode.started = true;
 
@@ -558,11 +726,11 @@
                 case 'SEQUENCE':
                     // space finishes the sequence set
                     if (chr === ' ') {
-                        if (!this.currentNode.value.substr(-1).match(/\d/) && this.currentNode.value.substr(-1) !== '*') {
+                        if (!this.currentNode.isDigit(-1) && !this.currentNode.equalsAt('*', -1)) {
                             throw new Error('Unexpected whitespace at position ' + (this.pos + i));
                         }
 
-                        if (this.currentNode.value.substr(-1) === '*' && this.currentNode.value.substr(-2, 1) !== ':') {
+                        if (this.currentNode.equalsAt('*', -1) && !this.currentNode.equalsAt(':', -2)) {
                             throw new Error('Unexpected whitespace at position ' + (this.pos + i));
                         }
 
@@ -587,40 +755,40 @@
                     }
 
                     if (chr === ':') {
-                        if (!this.currentNode.value.substr(-1).match(/\d/) && this.currentNode.value.substr(-1) !== '*') {
+                        if (!this.currentNode.isDigit(-1) && !this.currentNode.equalsAt('*', -1)) {
                             throw new Error('Unexpected range separator : at position ' + (this.pos + i));
                         }
                     } else if (chr === '*') {
-                        if ([',', ':'].indexOf(this.currentNode.value.substr(-1)) < 0) {
+                        if (!this.currentNode.equalsAt(',', -1) && !this.currentNode.equalsAt(':', -1)) {
                             throw new Error('Unexpected range wildcard at position ' + (this.pos + i));
                         }
                     } else if (chr === ',') {
-                        if (!this.currentNode.value.substr(-1).match(/\d/) && this.currentNode.value.substr(-1) !== '*') {
+                        if (!this.currentNode.isDigit(-1) && !this.currentNode.equalsAt('*', -1)) {
                             throw new Error('Unexpected sequence separator , at position ' + (this.pos + i));
                         }
-                        if (this.currentNode.value.substr(-1) === '*' && this.currentNode.value.substr(-2, 1) !== ':') {
+                        if (this.currentNode.equalsAt('*', -1) && !this.currentNode.equalsAt(':', -2)) {
                             throw new Error('Unexpected sequence separator , at position ' + (this.pos + i));
                         }
-                    } else if (!chr.match(/\d/)) {
+                    } else if (!/\d/.test(chr)) {
                         throw new Error('Unexpected char at position ' + (this.pos + i));
                     }
 
-                    if (chr.match(/\d/) && this.currentNode.value.substr(-1) === '*') {
+                    if (/\d/.test(chr) && this.currentNode.equalsAt('*', -1)) {
                         throw new Error('Unexpected number at position ' + (this.pos + i));
                     }
 
-                    this.currentNode.value += chr;
+                    this.currentNode.valueEnd = i + 1;
                     break;
             }
         }
     };
 
-    return function(command, options) {
+    return function(buffers, options) {
         var parser, response = {};
 
         options = options || {};
 
-        parser = new ParserInstance(command, options);
+        parser = new ParserInstance(buffers, options);
 
         response.tag = parser.getTag();
         parser.getSpace();
@@ -631,7 +799,7 @@
             response.command += ' ' + parser.getElement(imapFormalSyntax.command());
         }
 
-        if (parser.remainder.trim().length) {
+        if (!isEmpty(parser.remainder)) {
             parser.getSpace();
             response.attributes = parser.getAttributes();
         }

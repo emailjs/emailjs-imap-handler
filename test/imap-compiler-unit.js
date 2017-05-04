@@ -9,6 +9,14 @@
 }(this, function(chai, imapHandler) {
     'use strict';
 
+    function toUint8ArrayList(command) {
+        var asciiArray = [command.length];
+        for (var i = 0; i < command.length; i++) {
+            asciiArray[i] = command.charCodeAt(i);
+        }
+        return new Uint8Array(asciiArray);
+    }
+
     var expect = chai.expect;
     chai.Assertion.includeStack = true;
 
@@ -16,7 +24,7 @@
         describe('#compile', function() {
             it('should compile correctly', function() {
                 var command = '* FETCH (ENVELOPE ("Mon, 2 Sep 2013 05:30:13 -0700 (PDT)" NIL ((NIL NIL "andris" "kreata.ee")) ((NIL NIL "andris" "kreata.ee")) ((NIL NIL "andris" "kreata.ee")) ((NIL NIL "andris" "tr.ee")) NIL NIL NIL "<-4730417346358914070@unknownmsgid>") BODYSTRUCTURE BODY.PEEK[HEADER.FIELDS (REFERENCES, LIST-ID)] (("MESSAGE" "RFC822" NIL NIL NIL "7BIT" 105 (NIL NIL ((NIL NIL "andris" "kreata.ee")) ((NIL NIL "andris" "kreata.ee")) ((NIL NIL "andris" "kreata.ee")) ((NIL NIL "andris" "pangalink.net")) NIL NIL "<test1>" NIL) ("TEXT" "PLAIN" NIL NIL NIL "7BIT" 12 0 NIL NIL NIL) 5 NIL NIL NIL) ("MESSAGE" "RFC822" NIL NIL NIL "7BIT" 83 (NIL NIL ((NIL NIL "andris" "kreata.ee")) ((NIL NIL "andris" "kreata.ee")) ((NIL NIL "andris" "kreata.ee")) ((NIL NIL "andris" "pangalink.net")) NIL NIL "NIL" NIL) ("TEXT" "PLAIN" NIL NIL NIL "7BIT" 12 0 NIL NIL NIL) 4 NIL NIL NIL) ("TEXT" "HTML" ("CHARSET" "utf-8") NIL NIL "QUOTED-PRINTABLE" 19 0 NIL NIL NIL) "MIXED" ("BOUNDARY" "----mailcomposer-?=_1-1328088797399") NIL NIL))',
-                    parsed = imapHandler.parser(command, {
+                    parsed = imapHandler.parser(toUint8ArrayList(command), {
                         allowUntagged: true
                     }),
                     compiled = imapHandler.compiler(parsed);
