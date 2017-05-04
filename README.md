@@ -10,13 +10,13 @@ npm install emailjs-imap-handler
 
 ### Parse IMAP commands
 
-To parse a command you need to have the command as one complete string (including all literals) without the ending &lt;CR&gt;&lt;LF&gt;
+To parse a command you need to have the command as one complete Uint8Array (including all literals) without the ending &lt;CR&gt;&lt;LF&gt;
 
     imapHandler.parser(imapCommand);
 
 Where
 
-  * **imapCommand** is an IMAP string without the final line break
+  * **imapCommand** is an Uint8Array without the final line break
 
 The function returns an object in the following form:
 
@@ -48,9 +48,10 @@ If section or partial values are not specified in the command, the values are al
 For example
 
 ```javascript
-var imapHandler = require("imap-handler");
+var mimecodec = require("emailjs-mime-codec");
+var imapHandler = require("emailjs-imap-handler");
 
-imapHandler.parser("A1 FETCH *:4 (BODY[HEADER.FIELDS ({4}\r\nDate Subject)]<12.45> UID)");
+imapHandler.parser(mimecodec.toTypedArray("A1 FETCH *:4 (BODY[HEADER.FIELDS ({4}\r\nDate Subject)]<12.45> UID)"));
 ```
 
 Results in the following value:
@@ -100,7 +101,7 @@ Results in the following value:
 
 ### Compile command objects into IMAP commands
 
-You can "compile" parsed or self generated IMAP command obejcts to IMAP command strings with
+You can "compile" parsed or self generated IMAP command objects to IMAP command strings with
 
     imapHandler.compiler(commandObject, asArray);
 
