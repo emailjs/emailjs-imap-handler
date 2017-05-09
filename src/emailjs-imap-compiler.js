@@ -121,9 +121,11 @@
                         resp += val;
 
                         if (node.section) {
-                            needsSpace = false;
                             resp += '[';
-                            node.section.forEach(walk);
+                            if (node.section.length) {    
+                                needsSpace = false;
+                                node.section.forEach(walk);
+                            }
                             resp += ']';
                         }
                         if (node.partial) {
