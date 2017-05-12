@@ -1,7 +1,7 @@
 {
   "name": "emailjs-imap-handler",
   "main": "src/emailjs-imap-handler.js",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "homepage": "https://github.com/emailjs/emailjs-imap-handler",
   "author": "Andris Reinman <andris@kreata.ee>",
   "description": "Parse and compile IMAP commands",
