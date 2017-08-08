@@ -1,5 +1,7 @@
 # IMAP Handler
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/emailjs/emailjs-imap-handler.svg)](https://greenkeeper.io/)
+
 UMD module that parses and compiles IMAP commands.
 
 ## Usage
