@@ -39,17 +39,14 @@
     var ASCII_RIGHT_BRACKET = 93;
 
     function fromCharCode(uint8Array) {
-        var max = 10240;
-        var begin = 0;
+        var batchSize = 10240;
         var strings = [];
 
-        for (var i = 0; i < uint8Array.length; i++) {
-            if (i - begin >= max) {
-                strings.push(String.fromCharCode.apply(null, uint8Array.subarray(begin, i)));
-                begin = i;
-            }
+        for (var i = 0; i < uint8Array.length; i += batchSize) {
+            var begin = i;
+            var end = Math.min(i + batchSize, uint8Array.length);
+            strings.push(String.fromCharCode.apply(null, uint8Array.subarray(begin, end)));
         }
-        strings.push(String.fromCharCode.apply(null, uint8Array.subarray(begin, i)));
 
         return strings.join('');
     }
