@@ -12,12 +12,12 @@ npm install emailjs-imap-handler
 
 To parse a command you need to have the command as one complete Uint8Array (including all literals) without the ending &lt;CR&gt;&lt;LF&gt;
 
-    imapHandler.parser(imapCommand, options);
+    imapHandler.parser(imapCommand[, options]);
 
 Where
 
   * **imapCommand** is an Uint8Array without the final line break
-  * **options** contains options that affect the returned value
+  * **options** (optional) contains options that affect the returned value
 
 Where available options are
 
