@@ -38,27 +38,20 @@
     var ASCII_LEFT_BRACKET = 91;
     var ASCII_RIGHT_BRACKET = 93;
 
-    function fromCharCode(uint8Array, skip) {
-        skip = skip || [];
-        var max = 10240;
-        var begin = 0;
+    function fromCharCode(uint8Array) {
+        var batchSize = 10240;
         var strings = [];
 
-        for (var i = 0; i < uint8Array.length; i++) {
-            if (skip.indexOf(i) >= 0) {
-                strings.push(String.fromCharCode.apply(null, uint8Array.subarray(begin, i)));
-                begin = i + 1;
-            } else if (i - begin >= max) {
-                strings.push(String.fromCharCode.apply(null, uint8Array.subarray(begin, i)));
-                begin = i;
-            }
+        for (var i = 0; i < uint8Array.length; i += batchSize) {
+            var begin = i;
+            var end = Math.min(i + batchSize, uint8Array.length);
+            strings.push(String.fromCharCode.apply(null, uint8Array.subarray(begin, end)));
         }
-        strings.push(String.fromCharCode.apply(null, uint8Array.subarray(begin, i)));
 
         return strings.join('');
     }
 
-    function fromCharCodeTrimmed(uint8Array, skip) {
+    function fromCharCodeTrimmed(uint8Array) {
         var begin = 0;
         var end = uint8Array.length;
 
@@ -74,7 +67,7 @@
             uint8Array = uint8Array.subarray(begin, end);
         }
 
-        return fromCharCode(uint8Array, skip);
+        return fromCharCode(uint8Array);
     }
 
     function isEmpty(uint8Array) {
@@ -194,12 +187,38 @@
     }
 
     Node.prototype.getValue = function() {
-        var value = fromCharCode(this.uint8Array.subarray(this.valueStart, this.valueEnd), this.valueSkip);
+        var value = fromCharCode(this.getValueArray());
         return this.valueToUpperCase ? value.toUpperCase() : value;
     };
 
     Node.prototype.getValueLength = function() {
         return this.valueEnd - this.valueStart - this.valueSkip.length;
+    };
+
+    Node.prototype.getValueArray = function() {
+        var valueArray = this.uint8Array.subarray(this.valueStart, this.valueEnd);
+
+        if (this.valueSkip.length === 0) {
+            return valueArray;
+        }
+
+        var filteredArray = new Uint8Array(valueArray.length - this.valueSkip.length);
+        var begin = 0;
+        var offset = 0;
+        var skip = this.valueSkip.slice();
+
+        skip.push(valueArray.length);
+
+        skip.forEach(function(end) {
+            if (end > begin) {
+                var subArray = valueArray.subarray(begin, end);
+                filteredArray.set(subArray, offset);
+                offset += subArray.length;
+            }
+            begin = end + 1;
+        });
+
+        return filteredArray;
     };
 
     Node.prototype.equals = function(value, caseSensitive) {
@@ -312,6 +331,10 @@
 
         this.state = 'NORMAL';
 
+        if (this.options.valueAsString === undefined) {
+            this.options.valueAsString = true;
+        }
+
         this.processString();
     }
 
@@ -336,6 +359,12 @@
             switch (node.type.toUpperCase()) {
                 case 'LITERAL':
                 case 'STRING':
+                    elm = {
+                        type: node.type.toUpperCase(),
+                        value: this.options.valueAsString ? node.getValue() : node.getValueArray()
+                    };
+                    branch.push(elm);
+                    break;
                 case 'SEQUENCE':
                     elm = {
                         type: node.type.toUpperCase(),
