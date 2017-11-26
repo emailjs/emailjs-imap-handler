@@ -1,18 +1,23 @@
 # IMAP Handler
 
-UMD module that parses and compiles IMAP commands.
+Parses and compiles IMAP commands.
 
 ## Usage
 
 ```
-npm install emailjs-imap-handler
+npm install --save emailjs-imap-handler
+
+import { parser, compiler } from emailjs-imap-handler
 ```
 
 ### Parse IMAP commands
 
 To parse a command you need to have the command as one complete Uint8Array (including all literals) without the ending &lt;CR&gt;&lt;LF&gt;
 
-    imapHandler.parser(imapCommand[, options]);
+```javascript
+import { parser } from emailjs-imap-handler
+parser(imapCommand[, options]);
+```
 
 Where
 
@@ -25,7 +30,7 @@ Where available options are
 
 The function returns an object in the following form:
 
-```
+```javascript
 {
     tag: "TAG",
     command: "COMMAND",
@@ -53,10 +58,10 @@ If section or partial values are not specified in the command, the values are al
 For example
 
 ```javascript
-var mimecodec = require("emailjs-mime-codec");
-var imapHandler = require("emailjs-imap-handler");
+import { parser } from 'emailjs-imap-handler'
+const toTypedArray = str => new Uint8Array(str.split('').map(char => char.charCodeAt(0)))
 
-imapHandler.parser(mimecodec.toTypedArray("A1 FETCH *:4 (BODY[HEADER.FIELDS ({4}\r\nDate Subject)]<12.45> UID)"));
+parser(toTypedArray("A1 FETCH *:4 (BODY[HEADER.FIELDS ({4}\r\nDate Subject)]<12.45> UID)"));
 ```
 
 Results in the following value:
@@ -108,11 +113,14 @@ Results in the following value:
 
 You can "compile" parsed or self generated IMAP command objects to IMAP command strings with
 
-    imapHandler.compiler(commandObject, asArray);
+```javascript
+import { compiler } from emailjs-imap-handler
+compiler(commandObject, asArray);
+```
 
 Where
 
-  * **commandObject** is an object parsed with `imapHandler.parser()` or self generated
+  * **commandObject** is an object parsed with `parser()` or self generated
   * **asArray** if set to `true` return the value as an array instead of a string where the command is split on LITERAL notions
   * **isLogging** if set to true, do not include literals and long strings, useful when logging stuff and do not want to include message bodies etc. Additionally nodes with `sensitive: true` options are also not displayed (useful with logging passwords) if `logging` is used.
 
@@ -140,7 +148,7 @@ var command = {
     ]
 };
 
-imapHandler.compiler(command);
+compiler(command);
 // * OK [ALERT] NB! The server is shutting down
 ```
 
