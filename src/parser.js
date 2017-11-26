@@ -9,17 +9,14 @@ let ASCII_SPACE = 32
 let ASCII_LEFT_BRACKET = 91
 let ASCII_RIGHT_BRACKET = 93
 
-function fromCharCode (uint8Array, skip = []) {
+function fromCharCode (uint8Array) {
   const max = 10240
   let begin = 0
   let strings = []
   let i
 
   for (i = 0; i < uint8Array.length; i++) {
-    if (skip.indexOf(i) >= 0) {
-      strings.push(String.fromCharCode.apply(null, uint8Array.subarray(begin, i)))
-      begin = i + 1
-    } else if (i - begin >= max) {
+    if (i - begin >= max) {
       strings.push(String.fromCharCode.apply(null, uint8Array.subarray(begin, i)))
       begin = i
     }
@@ -167,12 +164,38 @@ class Node {
   }
 
   getValue () {
-    let value = fromCharCode(this.uint8Array.subarray(this.valueStart, this.valueEnd), this.valueSkip)
+    let value = fromCharCode(this.getValueArray())
     return this.valueToUpperCase ? value.toUpperCase() : value
   }
 
   getValueLength () {
     return this.valueEnd - this.valueStart - this.valueSkip.length
+  }
+
+  getValueArray () {
+    const valueArray = this.uint8Array.subarray(this.valueStart, this.valueEnd)
+
+    if (this.valueSkip.length === 0) {
+      return valueArray
+    }
+
+    let filteredArray = new Uint8Array(valueArray.length - this.valueSkip.length)
+    let begin = 0
+    let offset = 0
+    let skip = this.valueSkip.slice()
+
+    skip.push(valueArray.length)
+
+    skip.forEach(function (end) {
+      if (end > begin) {
+        var subArray = valueArray.subarray(begin, end)
+        filteredArray.set(subArray, offset)
+        offset += subArray.length
+      }
+      begin = end + 1
+    })
+
+    return filteredArray
   }
 
   equals (value, caseSensitive) {
@@ -274,9 +297,9 @@ class Node {
 }
 
 class TokenParser {
-  constructor (parent, startPos, uint8Array, options) {
+  constructor (parent, startPos, uint8Array, options = {}) {
     this.uint8Array = uint8Array
-    this.options = options || {}
+    this.options = options
     this.parent = parent
 
     this.tree = this.currentNode = this.createNode()
@@ -285,6 +308,10 @@ class TokenParser {
     this.currentNode.type = 'TREE'
 
     this.state = 'NORMAL'
+
+    if (this.options.valueAsString === undefined) {
+      this.options.valueAsString = true
+    }
 
     this.processString()
   }
@@ -311,6 +338,12 @@ class TokenParser {
       switch (node.type.toUpperCase()) {
         case 'LITERAL':
         case 'STRING':
+          elm = {
+            type: node.type.toUpperCase(),
+            value: this.options.valueAsString ? node.getValue() : node.getValueArray()
+          }
+          branch.push(elm)
+          break
         case 'SEQUENCE':
           elm = {
             type: node.type.toUpperCase(),

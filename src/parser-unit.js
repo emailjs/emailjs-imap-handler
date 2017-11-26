@@ -382,6 +382,19 @@ describe('IMAP Command Parser', function () {
         }]
       ])
     })
+    it('should return literal as Uint8Array', function () {
+      let options = { valueAsString: false }
+      let results = parser(str2arr('TAG1 CMD {4}\r\nabcd'), options)
+      let literal = results.attributes[0]
+
+      expect(literal.type).to.equal('LITERAL')
+      expect(literal.value instanceof Uint8Array).to.equal(true)
+      expect(literal.value.length).to.equal(4)
+      expect(literal.value[0]).to.equal(97)
+      expect(literal.value[1]).to.equal(98)
+      expect(literal.value[2]).to.equal(99)
+      expect(literal.value[3]).to.equal(100)
+    })
   })
 
   describe('ATOM Section', function () {
