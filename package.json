@@ -1,30 +1,52 @@
 {
   "name": "emailjs-imap-handler",
-  "main": "src/emailjs-imap-handler.js",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "homepage": "https://github.com/emailjs/emailjs-imap-handler",
   "author": "Andris Reinman <andris@kreata.ee>",
   "description": "Parse and compile IMAP commands",
   "keywords": [
     "IMAP",
-    "parser"
+    "compiler"
   ],
+  "main": "./dist/handler",
   "license": "MIT",
   "scripts": {
-    "test": "grunt"
+    "build": "./scripts/build.sh",
+    "release": "./scripts/release.sh",
+    "lint": "$(npm bin)/standard",
+    "test": "npm run lint && npm run unit",
+    "unit": "$(npm bin)/mocha './src/*-unit.js' --reporter spec --require babel-register testutils.js",
+    "test-watch": "$(npm bin)/mocha './src/*-unit.js' --reporter spec --require babel-register testutils.js --watch"
   },
   "repository": {
     "type": "git",
     "url": "git://github.com/emailjs/emailjs-imap-handler.git"
   },
-  "dependencies": {},
+  "dependencies": {
+    "ramda": "^0.25.0"
+  },
   "devDependencies": {
-    "chai": "^4.1.1",
-    "grunt": "^1.0.1",
-    "grunt-contrib-connect": "^1.0.2",
-    "grunt-contrib-jshint": "^1.1.0",
-    "grunt-mocha-test": "^0.13.2",
-    "mocha": "^3.5.0",
-    "requirejs": "^2.1.22"
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "chai": "^4.1.2",
+    "mocha": "^4.0.1",
+    "nodemon": "^1.12.1",
+    "pre-commit": "^1.2.2",
+    "standard": "^10.0.3"
+  },
+  "standard": {
+    "globals": [
+      "describe",
+      "it",
+      "before",
+      "beforeEach",
+      "afterEach",
+      "after",
+      "expect"
+    ],
+    "ignore": [
+      "dist"
+    ]
   }
 }

@@ -1,28 +1,38 @@
 # IMAP Handler
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/emailjs/emailjs-imap-handler.svg)](https://greenkeeper.io/)
+[![Greenkeeper badge](https://badges.greenkeeper.io/emailjs/emailjs-imap-handler.svg)](https://greenkeeper.io/) [![Build Status](https://travis-ci.org/emailjs/emailjs-imap-handler.png?branch=master)](https://travis-ci.org/emailjs/emailjs-imap-handler) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)  [![ES6+](https://camo.githubusercontent.com/567e52200713e0f0c05a5238d91e1d096292b338/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f65732d362b2d627269676874677265656e2e737667)](https://kangax.github.io/compat-table/es6/) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-UMD module that parses and compiles IMAP commands.
+Parses and compiles IMAP commands.
 
 ## Usage
 
 ```
-npm install emailjs-imap-handler
+npm install --save emailjs-imap-handler
+
+import { parser, compiler } from emailjs-imap-handler
 ```
 
 ### Parse IMAP commands
 
 To parse a command you need to have the command as one complete Uint8Array (including all literals) without the ending &lt;CR&gt;&lt;LF&gt;
 
-    imapHandler.parser(imapCommand);
+```javascript
+import { parser } from emailjs-imap-handler
+parser(imapCommand[, options]);
+```
 
 Where
 
   * **imapCommand** is an Uint8Array without the final line break
+  * **options** (optional) contains options that affect the returned value
+
+Where available options are
+
+  * **valueAsString** LITERAL and STRING values are returned as strings rather than Uint8Array objects. Defaults to true.
 
 The function returns an object in the following form:
 
-```
+```javascript
 {
     tag: "TAG",
     command: "COMMAND",
@@ -50,10 +60,10 @@ If section or partial values are not specified in the command, the values are al
 For example
 
 ```javascript
-var mimecodec = require("emailjs-mime-codec");
-var imapHandler = require("emailjs-imap-handler");
+import { parser } from 'emailjs-imap-handler'
+const toTypedArray = str => new Uint8Array(str.split('').map(char => char.charCodeAt(0)))
 
-imapHandler.parser(mimecodec.toTypedArray("A1 FETCH *:4 (BODY[HEADER.FIELDS ({4}\r\nDate Subject)]<12.45> UID)"));
+parser(toTypedArray("A1 FETCH *:4 (BODY[HEADER.FIELDS ({4}\r\nDate Subject)]<12.45> UID)"));
 ```
 
 Results in the following value:
@@ -105,11 +115,14 @@ Results in the following value:
 
 You can "compile" parsed or self generated IMAP command objects to IMAP command strings with
 
-    imapHandler.compiler(commandObject, asArray);
+```javascript
+import { compiler } from emailjs-imap-handler
+compiler(commandObject, asArray);
+```
 
 Where
 
-  * **commandObject** is an object parsed with `imapHandler.parser()` or self generated
+  * **commandObject** is an object parsed with `parser()` or self generated
   * **asArray** if set to `true` return the value as an array instead of a string where the command is split on LITERAL notions
   * **isLogging** if set to true, do not include literals and long strings, useful when logging stuff and do not want to include message bodies etc. Additionally nodes with `sensitive: true` options are also not displayed (useful with logging passwords) if `logging` is used.
 
@@ -137,7 +150,7 @@ var command = {
     ]
 };
 
-imapHandler.compiler(command);
+compiler(command);
 // * OK [ALERT] NB! The server is shutting down
 ```
 
