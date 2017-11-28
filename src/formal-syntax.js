@@ -3,7 +3,7 @@ import { memoize, without, range } from 'ramda'
 // IMAP Formal Syntax
 // http://tools.ietf.org/html/rfc3501#section-9
 
-const expandRange = (start, end) => String.fromCharCode.apply(String, range(start, end))
+const expandRange = (start, end) => String.fromCharCode.apply(String, range(start, end + 1))
 const excludeChars = (source, exclude) => without(exclude.split(''), source.split('')).join('')
 
 export const CHAR = memoize(() => expandRange(0x01, 0x7F))
