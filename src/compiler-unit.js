@@ -95,7 +95,7 @@ describe('IMAP Command Compiler', function () {
           value: 'Tere tere!',
           sensitive: true
         },
-          'Vana kere'
+        'Vana kere'
         ]
 
         expect(compiler(parsed)).to.equal('* CMD "Tere tere!" "Vana kere"')
@@ -106,7 +106,7 @@ describe('IMAP Command Compiler', function () {
           type: 'String',
           value: 'Tere tere!'
         },
-          'Vana kere'
+        'Vana kere'
         ]
 
         expect(compiler(parsed, false, true)).to.equal('* CMD "Tere tere!" "Vana kere"')
@@ -118,7 +118,7 @@ describe('IMAP Command Compiler', function () {
           value: 'Tere tere!',
           sensitive: true
         },
-          'Vana kere'
+        'Vana kere'
         ]
 
         expect(compiler(parsed, false, true)).to.equal('* CMD "(* value hidden *)" "Vana kere"')
@@ -129,7 +129,7 @@ describe('IMAP Command Compiler', function () {
           type: 'String',
           value: 'Tere tere! Tere tere! Tere tere! Tere tere! Tere tere!'
         },
-          'Vana kere'
+        'Vana kere'
         ]
 
         expect(compiler(parsed, false, true)).to.equal('* CMD "(* 54B string *)" "Vana kere"')
@@ -160,7 +160,7 @@ describe('IMAP Command Compiler', function () {
             type: 'LITERAL',
             value: 'Tere tere!'
           },
-            'Vana kere'
+          'Vana kere'
           ]
         }
 
@@ -193,7 +193,7 @@ describe('IMAP Command Compiler', function () {
             type: 'LITERAL',
             value: 'Vana kere'
           },
-            'zzz'
+          'zzz'
           ]
         }
         expect(compiler(parsed, true)).to.deep.equal(['* CMD {10}\r\n', 'Tere tere! {9}\r\n', 'Vana kere "zzz"'])
@@ -220,7 +220,7 @@ describe('IMAP Command Compiler', function () {
             type: 'LITERAL',
             value: 'Tere tere!'
           },
-            'Vana kere'
+          'Vana kere'
           ]
         }
 

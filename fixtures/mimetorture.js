@@ -35,13 +35,13 @@ export default {
         type: 'STRING',
         value: 'Andris Reinman'
       },
-        null, {
-          type: 'STRING',
-          value: 'andris'
-        }, {
-          type: 'STRING',
-          value: 'ekiri.ee'
-        }
+      null, {
+        type: 'STRING',
+        value: 'andris'
+      }, {
+        type: 'STRING',
+        value: 'ekiri.ee'
+      }
       ]
     ],
     [
@@ -49,13 +49,13 @@ export default {
         type: 'STRING',
         value: 'Andris Reinman'
       },
-        null, {
-          type: 'STRING',
-          value: 'andris'
-        }, {
-          type: 'STRING',
-          value: 'ekiri.ee'
-        }
+      null, {
+        type: 'STRING',
+        value: 'andris'
+      }, {
+        type: 'STRING',
+        value: 'ekiri.ee'
+      }
       ]
     ],
     [
@@ -63,13 +63,13 @@ export default {
         type: 'STRING',
         value: 'Andris Reinman'
       },
-        null, {
-          type: 'STRING',
-          value: 'andris'
-        }, {
-          type: 'STRING',
-          value: 'ekiri.ee'
-        }
+      null, {
+        type: 'STRING',
+        value: 'andris'
+      }, {
+        type: 'STRING',
+        value: 'ekiri.ee'
+      }
       ]
     ],
     [
@@ -83,12 +83,12 @@ export default {
         }
       ]
     ],
-      null,
-      null,
-      null, {
-        type: 'STRING',
-        value: '<1066976914.4721.5.camel@localhost>'
-      }
+    null,
+    null,
+    null, {
+      type: 'STRING',
+      value: '<1066976914.4721.5.camel@localhost>'
+    }
     ], {
       type: 'ATOM',
       value: 'BODYSTRUCTURE'
@@ -108,21 +108,21 @@ export default {
         type: 'STRING',
         value: 'US-ASCII'
       }],
-        null,
-        null, {
-          type: 'STRING',
-          value: '8bit'
-        }, {
-          type: 'ATOM',
-          value: '617'
-        }, {
-          type: 'ATOM',
-          value: '16'
-        },
-        null,
-        null,
-        null,
-        null
+      null,
+      null, {
+        type: 'STRING',
+        value: '8bit'
+      }, {
+        type: 'ATOM',
+        value: '617'
+      }, {
+        type: 'ATOM',
+        value: '16'
+      },
+      null,
+      null,
+      null,
+      null
       ],
       [{
         type: 'STRING',
@@ -131,17 +131,17 @@ export default {
         type: 'STRING',
         value: 'rfc822'
       },
-        null,
-        null, {
-          type: 'STRING',
-          value: 'I\'ll be whatever I wanna do. --Fry'
-        }, {
-          type: 'STRING',
-          value: '7bit'
-        }, {
-          type: 'ATOM',
-          value: '582'
-        },
+      null,
+      null, {
+        type: 'STRING',
+        value: 'I\'ll be whatever I wanna do. --Fry'
+      }, {
+        type: 'STRING',
+        value: '7bit'
+      }, {
+        type: 'ATOM',
+        value: '582'
+      },
       [{
         type: 'STRING',
         value: '23 Oct 2003 22:25:56 -0700'
@@ -154,13 +154,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -168,13 +168,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -182,13 +182,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -202,12 +202,12 @@ export default {
           }
         ]
       ],
-        null,
-        null,
-        null, {
-          type: 'STRING',
-          value: '<1066973156.4264.42.camel@localhost>'
-        }
+      null,
+      null,
+      null, {
+        type: 'STRING',
+        value: '<1066973156.4264.42.camel@localhost>'
+      }
       ],
       [{
         type: 'STRING',
@@ -223,33 +223,33 @@ export default {
         type: 'STRING',
         value: 'US-ASCII'
       }],
-        null,
-        null, {
-          type: 'STRING',
-          value: '8bit'
-        }, {
-          type: 'ATOM',
-          value: '311'
-        }, {
-          type: 'ATOM',
-          value: '9'
-        },
-        null,
-        null,
-        null,
-        null
+      null,
+      null, {
+        type: 'STRING',
+        value: '8bit'
+      }, {
+        type: 'ATOM',
+        value: '311'
+      }, {
+        type: 'ATOM',
+        value: '9'
+      },
+      null,
+      null,
+      null,
+      null
       ], {
         type: 'ATOM',
         value: '18'
       },
-        null, [{
-          type: 'STRING',
-          value: 'inline'
-        },
-          null
-        ],
-        null,
-        null
+      null, [{
+        type: 'STRING',
+        value: 'inline'
+      },
+      null
+      ],
+      null,
+      null
       ],
       [{
         type: 'STRING',
@@ -258,17 +258,17 @@ export default {
         type: 'STRING',
         value: 'rfc822'
       },
-        null,
-        null, {
-          type: 'STRING',
-          value: 'Would you kindly shut your noise-hole? --Bender'
-        }, {
-          type: 'STRING',
-          value: '7bit'
-        }, {
-          type: 'ATOM',
-          value: '1460'
-        },
+      null,
+      null, {
+        type: 'STRING',
+        value: 'Would you kindly shut your noise-hole? --Bender'
+      }, {
+        type: 'STRING',
+        value: '7bit'
+      }, {
+        type: 'ATOM',
+        value: '1460'
+      },
       [{
         type: 'STRING',
         value: '23 Oct 2003 23:15:11 -0700'
@@ -281,13 +281,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -295,13 +295,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -309,13 +309,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -329,12 +329,12 @@ export default {
           }
         ]
       ],
-        null,
-        null,
-        null, {
-          type: 'STRING',
-          value: '<1066976111.4263.74.camel@localhost>'
-        }
+      null,
+      null,
+      null, {
+        type: 'STRING',
+        value: '<1066976111.4263.74.camel@localhost>'
+      }
       ],
       [
         [{
@@ -351,21 +351,21 @@ export default {
           type: 'STRING',
           value: 'US-ASCII'
         }],
-          null,
-          null, {
-            type: 'STRING',
-            value: '8bit'
-          }, {
-            type: 'ATOM',
-            value: '193'
-          }, {
-            type: 'ATOM',
-            value: '3'
-          },
-          null,
-          null,
-          null,
-          null
+        null,
+        null, {
+          type: 'STRING',
+          value: '8bit'
+        }, {
+          type: 'ATOM',
+          value: '193'
+        }, {
+          type: 'ATOM',
+          value: '3'
+        },
+        null,
+        null,
+        null,
+        null
         ],
         [{
           type: 'STRING',
@@ -374,17 +374,17 @@ export default {
           type: 'STRING',
           value: 'rfc822'
         },
-          null,
-          null, {
-            type: 'STRING',
-            value: 'At the risk of sounding negative, no. --Leela'
-          }, {
-            type: 'STRING',
-            value: '7bit'
-          }, {
-            type: 'ATOM',
-            value: '697'
-          },
+        null,
+        null, {
+          type: 'STRING',
+          value: 'At the risk of sounding negative, no. --Leela'
+        }, {
+          type: 'STRING',
+          value: '7bit'
+        }, {
+          type: 'ATOM',
+          value: '697'
+        },
         [{
           type: 'STRING',
           value: '23 Oct 2003 23:09:05 -0700'
@@ -397,13 +397,13 @@ export default {
             type: 'STRING',
             value: 'Ryan Finnie'
           },
-            null, {
-              type: 'STRING',
-              value: 'rfinnie'
-            }, {
-              type: 'STRING',
-              value: 'domain.dom'
-            }
+          null, {
+            type: 'STRING',
+            value: 'rfinnie'
+          }, {
+            type: 'STRING',
+            value: 'domain.dom'
+          }
           ]
         ],
         [
@@ -411,13 +411,13 @@ export default {
             type: 'STRING',
             value: 'Ryan Finnie'
           },
-            null, {
-              type: 'STRING',
-              value: 'rfinnie'
-            }, {
-              type: 'STRING',
-              value: 'domain.dom'
-            }
+          null, {
+            type: 'STRING',
+            value: 'rfinnie'
+          }, {
+            type: 'STRING',
+            value: 'domain.dom'
+          }
           ]
         ],
         [
@@ -425,13 +425,13 @@ export default {
             type: 'STRING',
             value: 'Ryan Finnie'
           },
-            null, {
-              type: 'STRING',
-              value: 'rfinnie'
-            }, {
-              type: 'STRING',
-              value: 'domain.dom'
-            }
+          null, {
+            type: 'STRING',
+            value: 'rfinnie'
+          }, {
+            type: 'STRING',
+            value: 'domain.dom'
+          }
           ]
         ],
         [
@@ -445,12 +445,12 @@ export default {
             }
           ]
         ],
-          null,
-          null,
-          null, {
-            type: 'STRING',
-            value: '<1066975745.4263.70.camel@localhost>'
-          }
+        null,
+        null,
+        null, {
+          type: 'STRING',
+          value: '<1066975745.4263.70.camel@localhost>'
+        }
         ],
         [
           [{
@@ -467,21 +467,21 @@ export default {
             type: 'STRING',
             value: 'US-ASCII'
           }],
-            null,
-            null, {
-              type: 'STRING',
-              value: '8bit'
-            }, {
-              type: 'ATOM',
-              value: '78'
-            }, {
-              type: 'ATOM',
-              value: '3'
-            },
-            null,
-            null,
-            null,
-            null
+          null,
+          null, {
+            type: 'STRING',
+            value: '8bit'
+          }, {
+            type: 'ATOM',
+            value: '78'
+          }, {
+            type: 'ATOM',
+            value: '3'
+          },
+          null,
+          null,
+          null,
+          null
           ],
           [{
             type: 'STRING',
@@ -497,28 +497,28 @@ export default {
             type: 'STRING',
             value: 'foo.gz'
           }],
-            null,
-            null, {
-              type: 'STRING',
-              value: 'base64'
-            }, {
-              type: 'ATOM',
-              value: '58'
-            },
-            null, [{
-              type: 'STRING',
-              value: 'attachment'
-            },
-            [{
-              type: 'STRING',
-              value: 'filename'
-            }, {
-              type: 'STRING',
-              value: 'foo.gz'
-            }]
-            ],
-            null,
-            null
+          null,
+          null, {
+            type: 'STRING',
+            value: 'base64'
+          }, {
+            type: 'ATOM',
+            value: '58'
+          },
+          null, [{
+            type: 'STRING',
+            value: 'attachment'
+          },
+          [{
+            type: 'STRING',
+            value: 'filename'
+          }, {
+            type: 'STRING',
+            value: 'foo.gz'
+          }]
+          ],
+          null,
+          null
           ], {
             type: 'STRING',
             value: 'mixed'
@@ -537,14 +537,14 @@ export default {
           type: 'ATOM',
           value: '25'
         },
-          null, [{
-            type: 'STRING',
-            value: 'inline'
-          },
-            null
-          ],
-          null,
-          null
+        null, [{
+          type: 'STRING',
+          value: 'inline'
+        },
+        null
+        ],
+        null,
+        null
         ], {
           type: 'STRING',
           value: 'mixed'
@@ -563,14 +563,14 @@ export default {
         type: 'ATOM',
         value: '49'
       },
-        null, [{
-          type: 'STRING',
-          value: 'inline'
-        },
-          null
-        ],
-        null,
-        null
+      null, [{
+        type: 'STRING',
+        value: 'inline'
+      },
+      null
+      ],
+      null,
+      null
       ],
       [{
         type: 'STRING',
@@ -579,17 +579,17 @@ export default {
         type: 'STRING',
         value: 'rfc822'
       },
-        null,
-        null, {
-          type: 'STRING',
-          value: 'Dirt doesn\'t need luck! --Professor'
-        }, {
-          type: 'STRING',
-          value: '7bit'
-        }, {
-          type: 'ATOM',
-          value: '817'
-        },
+      null,
+      null, {
+        type: 'STRING',
+        value: 'Dirt doesn\'t need luck! --Professor'
+      }, {
+        type: 'STRING',
+        value: '7bit'
+      }, {
+        type: 'ATOM',
+        value: '817'
+      },
       [{
         type: 'STRING',
         value: '23 Oct 2003 22:40:49 -0700'
@@ -602,13 +602,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -616,13 +616,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -630,13 +630,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -650,12 +650,12 @@ export default {
           }
         ]
       ],
-        null,
-        null,
-        null, {
-          type: 'STRING',
-          value: '<1066974048.4264.62.camel@localhost>'
-        }
+      null,
+      null,
+      null, {
+        type: 'STRING',
+        value: '<1066974048.4264.62.camel@localhost>'
+      }
       ],
       [{
         type: 'STRING',
@@ -671,42 +671,42 @@ export default {
         type: 'STRING',
         value: 'blah.gz'
       }],
-        null, {
-          type: 'STRING',
-          value: 'Attachment has identical content to above foo.gz'
-        }, {
-          type: 'STRING',
-          value: 'base64'
-        }, {
-          type: 'ATOM',
-          value: '396'
-        },
-        null, [{
-          type: 'STRING',
-          value: 'attachment'
-        },
-        [{
-          type: 'STRING',
-          value: 'filename'
-        }, {
-          type: 'STRING',
-          value: 'blah.gz'
-        }]
-        ],
-        null,
-        null
+      null, {
+        type: 'STRING',
+        value: 'Attachment has identical content to above foo.gz'
+      }, {
+        type: 'STRING',
+        value: 'base64'
+      }, {
+        type: 'ATOM',
+        value: '396'
+      },
+      null, [{
+        type: 'STRING',
+        value: 'attachment'
+      },
+      [{
+        type: 'STRING',
+        value: 'filename'
+      }, {
+        type: 'STRING',
+        value: 'blah.gz'
+      }]
+      ],
+      null,
+      null
       ], {
         type: 'ATOM',
         value: '17'
       },
-        null, [{
-          type: 'STRING',
-          value: 'inline'
-        },
-          null
-        ],
-        null,
-        null
+      null, [{
+        type: 'STRING',
+        value: 'inline'
+      },
+      null
+      ],
+      null,
+      null
       ],
       [{
         type: 'STRING',
@@ -715,17 +715,17 @@ export default {
         type: 'STRING',
         value: 'rfc822'
       },
-        null,
-        null, {
-          type: 'STRING',
-          value: 'Hold still, I don\'t have good depth perception! --Leela'
-        }, {
-          type: 'STRING',
-          value: '7bit'
-        }, {
-          type: 'ATOM',
-          value: '1045'
-        },
+      null,
+      null, {
+        type: 'STRING',
+        value: 'Hold still, I don\'t have good depth perception! --Leela'
+      }, {
+        type: 'STRING',
+        value: '7bit'
+      }, {
+        type: 'ATOM',
+        value: '1045'
+      },
       [{
         type: 'STRING',
         value: '23 Oct 2003 23:09:16 -0700'
@@ -738,13 +738,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -752,13 +752,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -766,13 +766,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -786,12 +786,12 @@ export default {
           }
         ]
       ],
-        null,
-        null,
-        null, {
-          type: 'STRING',
-          value: '<1066975756.4263.70.camel@localhost>'
-        }
+      null,
+      null,
+      null, {
+        type: 'STRING',
+        value: '<1066975756.4263.70.camel@localhost>'
+      }
       ],
       [
         [{
@@ -808,21 +808,21 @@ export default {
           type: 'STRING',
           value: 'US-ASCII'
         }],
-          null,
-          null, {
-            type: 'STRING',
-            value: '8bit'
-          }, {
-            type: 'ATOM',
-            value: '377'
-          }, {
-            type: 'ATOM',
-            value: '6'
-          },
-          null,
-          null,
-          null,
-          null
+        null,
+        null, {
+          type: 'STRING',
+          value: '8bit'
+        }, {
+          type: 'ATOM',
+          value: '377'
+        }, {
+          type: 'ATOM',
+          value: '6'
+        },
+        null,
+        null,
+        null,
+        null
         ],
         [{
           type: 'STRING',
@@ -838,30 +838,30 @@ export default {
           type: 'STRING',
           value: 'blah2.gz'
         }],
-          null, {
-            type: 'STRING',
-            value: 'filename is blah1.gz, name is blah2.gz'
-          }, {
-            type: 'STRING',
-            value: 'base64'
-          }, {
-            type: 'ATOM',
-            value: '58'
-          },
-          null, [{
-            type: 'STRING',
-            value: 'attachment'
-          },
-          [{
-            type: 'STRING',
-            value: 'filename'
-          }, {
-            type: 'STRING',
-            value: 'blah1.gz'
-          }]
-          ],
-          null,
-          null
+        null, {
+          type: 'STRING',
+          value: 'filename is blah1.gz, name is blah2.gz'
+        }, {
+          type: 'STRING',
+          value: 'base64'
+        }, {
+          type: 'ATOM',
+          value: '58'
+        },
+        null, [{
+          type: 'STRING',
+          value: 'attachment'
+        },
+        [{
+          type: 'STRING',
+          value: 'filename'
+        }, {
+          type: 'STRING',
+          value: 'blah1.gz'
+        }]
+        ],
+        null,
+        null
         ], {
           type: 'STRING',
           value: 'mixed'
@@ -880,14 +880,14 @@ export default {
         type: 'ATOM',
         value: '29'
       },
-        null, [{
-          type: 'STRING',
-          value: 'inline'
-        },
-          null
-        ],
-        null,
-        null
+      null, [{
+        type: 'STRING',
+        value: 'inline'
+      },
+      null
+      ],
+      null,
+      null
       ],
       [{
         type: 'STRING',
@@ -896,17 +896,17 @@ export default {
         type: 'STRING',
         value: 'rfc822'
       },
-        null,
-        null, {
-          type: 'STRING',
-          value: 'Hello little man.  I WILL DESTROY YOU! --Moro'
-        }, {
-          type: 'STRING',
-          value: '7bit'
-        }, {
-          type: 'ATOM',
-          value: '1149'
-        },
+      null,
+      null, {
+        type: 'STRING',
+        value: 'Hello little man.  I WILL DESTROY YOU! --Moro'
+      }, {
+        type: 'STRING',
+        value: '7bit'
+      }, {
+        type: 'ATOM',
+        value: '1149'
+      },
       [{
         type: 'STRING',
         value: '23 Oct 2003 23:09:21 -0700'
@@ -919,13 +919,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -933,13 +933,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -947,13 +947,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -967,12 +967,12 @@ export default {
           }
         ]
       ],
-        null,
-        null,
-        null, {
-          type: 'STRING',
-          value: '<1066975761.4263.70.camel@localhost>'
-        }
+      null,
+      null,
+      null, {
+        type: 'STRING',
+        value: '<1066975761.4263.70.camel@localhost>'
+      }
       ],
       [
         [{
@@ -989,21 +989,21 @@ export default {
           type: 'STRING',
           value: 'US-ASCII'
         }],
-          null,
-          null, {
-            type: 'STRING',
-            value: '8bit'
-          }, {
-            type: 'ATOM',
-            value: '517'
-          }, {
-            type: 'ATOM',
-            value: '10'
-          },
-          null,
-          null,
-          null,
-          null
+        null,
+        null, {
+          type: 'STRING',
+          value: '8bit'
+        }, {
+          type: 'ATOM',
+          value: '517'
+        }, {
+          type: 'ATOM',
+          value: '10'
+        },
+        null,
+        null,
+        null,
+        null
         ],
         [{
           type: 'STRING',
@@ -1012,25 +1012,25 @@ export default {
           type: 'STRING',
           value: 'x-gzip'
         },
-          null,
-          null, {
-            type: 'STRING',
-            value: 'I\'m getting sick of witty things to say'
-          }, {
-            type: 'STRING',
-            value: 'base64'
-          }, {
-            type: 'ATOM',
-            value: '58'
-          },
-          null, [{
-            type: 'STRING',
-            value: 'attachment'
-          },
-            null
-          ],
-          null,
-          null
+        null,
+        null, {
+          type: 'STRING',
+          value: 'I\'m getting sick of witty things to say'
+        }, {
+          type: 'STRING',
+          value: 'base64'
+        }, {
+          type: 'ATOM',
+          value: '58'
+        },
+        null, [{
+          type: 'STRING',
+          value: 'attachment'
+        },
+        null
+        ],
+        null,
+        null
         ], {
           type: 'STRING',
           value: 'mixed'
@@ -1049,14 +1049,14 @@ export default {
         type: 'ATOM',
         value: '33'
       },
-        null, [{
-          type: 'STRING',
-          value: 'inline'
-        },
-          null
-        ],
-        null,
-        null
+      null, [{
+        type: 'STRING',
+        value: 'inline'
+      },
+      null
+      ],
+      null,
+      null
       ],
       [{
         type: 'STRING',
@@ -1065,17 +1065,17 @@ export default {
         type: 'STRING',
         value: 'rfc822'
       },
-        null,
-        null, {
-          type: 'STRING',
-          value: 'Friends! Help! A guinea pig tricked me! --Zoidberg'
-        }, {
-          type: 'STRING',
-          value: '7bit'
-        }, {
-          type: 'ATOM',
-          value: '896'
-        },
+      null,
+      null, {
+        type: 'STRING',
+        value: 'Friends! Help! A guinea pig tricked me! --Zoidberg'
+      }, {
+        type: 'STRING',
+        value: '7bit'
+      }, {
+        type: 'ATOM',
+        value: '896'
+      },
       [{
         type: 'STRING',
         value: '23 Oct 2003 22:40:45 -0700'
@@ -1088,13 +1088,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -1102,13 +1102,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -1116,13 +1116,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -1136,12 +1136,12 @@ export default {
           }
         ]
       ],
-        null,
-        null,
-        null, {
-          type: 'STRING',
-          value: '<1066974044.4264.62.camel@localhost>'
-        }
+      null,
+      null,
+      null, {
+        type: 'STRING',
+        value: '<1066974044.4264.62.camel@localhost>'
+      }
       ],
       [
         [{
@@ -1158,21 +1158,21 @@ export default {
           type: 'STRING',
           value: 'utf-8'
         }],
-          null,
-          null, {
-            type: 'STRING',
-            value: '8bit'
-          }, {
-            type: 'ATOM',
-            value: '327'
-          }, {
-            type: 'ATOM',
-            value: '11'
-          },
-          null,
-          null,
-          null,
-          null
+        null,
+        null, {
+          type: 'STRING',
+          value: '8bit'
+        }, {
+          type: 'ATOM',
+          value: '327'
+        }, {
+          type: 'ATOM',
+          value: '11'
+        },
+        null,
+        null,
+        null,
+        null
         ],
         [{
           type: 'STRING',
@@ -1188,21 +1188,21 @@ export default {
           type: 'STRING',
           value: 'US-ASCII'
         }],
-          null,
-          null, {
-            type: 'STRING',
-            value: '8bit'
-          }, {
-            type: 'ATOM',
-            value: '61'
-          }, {
-            type: 'ATOM',
-            value: '2'
-          },
-          null,
-          null,
-          null,
-          null
+        null,
+        null, {
+          type: 'STRING',
+          value: '8bit'
+        }, {
+          type: 'ATOM',
+          value: '61'
+        }, {
+          type: 'ATOM',
+          value: '2'
+        },
+        null,
+        null,
+        null,
+        null
         ], {
           type: 'STRING',
           value: 'mixed'
@@ -1221,14 +1221,14 @@ export default {
         type: 'ATOM',
         value: '33'
       },
-        null, [{
-          type: 'STRING',
-          value: 'inline'
-        },
-          null
-        ],
-        null,
-        null
+      null, [{
+        type: 'STRING',
+        value: 'inline'
+      },
+      null
+      ],
+      null,
+      null
       ],
       [{
         type: 'STRING',
@@ -1237,17 +1237,17 @@ export default {
         type: 'STRING',
         value: 'rfc822'
       },
-        null,
-        null, {
-          type: 'STRING',
-          value: 'Smeesh! --Amy'
-        }, {
-          type: 'STRING',
-          value: '7bit'
-        }, {
-          type: 'ATOM',
-          value: '642'
-        },
+      null,
+      null, {
+        type: 'STRING',
+        value: 'Smeesh! --Amy'
+      }, {
+        type: 'STRING',
+        value: '7bit'
+      }, {
+        type: 'ATOM',
+        value: '642'
+      },
       [{
         type: 'STRING',
         value: '23 Oct 2003 22:41:29 -0700'
@@ -1260,13 +1260,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -1274,13 +1274,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -1288,13 +1288,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -1308,12 +1308,12 @@ export default {
           }
         ]
       ],
-        null,
-        null,
-        null, {
-          type: 'STRING',
-          value: '<1066974089.4265.64.camel@localhost>'
-        }
+      null,
+      null,
+      null, {
+        type: 'STRING',
+        value: '<1066974089.4265.64.camel@localhost>'
+      }
       ],
       [
         [{
@@ -1330,21 +1330,21 @@ export default {
           type: 'STRING',
           value: 'US-ASCII'
         }],
-          null,
-          null, {
-            type: 'STRING',
-            value: '8bit'
-          }, {
-            type: 'ATOM',
-            value: '62'
-          }, {
-            type: 'ATOM',
-            value: '2'
-          },
-          null,
-          null,
-          null,
-          null
+        null,
+        null, {
+          type: 'STRING',
+          value: '8bit'
+        }, {
+          type: 'ATOM',
+          value: '62'
+        }, {
+          type: 'ATOM',
+          value: '2'
+        },
+        null,
+        null,
+        null,
+        null
         ],
         [{
           type: 'STRING',
@@ -1360,21 +1360,21 @@ export default {
           type: 'STRING',
           value: 'US-ASCII'
         }],
-          null,
-          null, {
-            type: 'STRING',
-            value: '8bit'
-          }, {
-            type: 'ATOM',
-            value: '68'
-          }, {
-            type: 'ATOM',
-            value: '2'
-          },
-          null,
-          null,
-          null,
-          null
+        null,
+        null, {
+          type: 'STRING',
+          value: '8bit'
+        }, {
+          type: 'ATOM',
+          value: '68'
+        }, {
+          type: 'ATOM',
+          value: '2'
+        },
+        null,
+        null,
+        null,
+        null
         ], {
           type: 'STRING',
           value: 'mixed'
@@ -1393,14 +1393,14 @@ export default {
         type: 'ATOM',
         value: '24'
       },
-        null, [{
-          type: 'STRING',
-          value: 'inline'
-        },
-          null
-        ],
-        null,
-        null
+      null, [{
+        type: 'STRING',
+        value: 'inline'
+      },
+      null
+      ],
+      null,
+      null
       ],
       [{
         type: 'STRING',
@@ -1409,17 +1409,17 @@ export default {
         type: 'STRING',
         value: 'rfc822'
       },
-        null,
-        null, {
-          type: 'STRING',
-          value: 'That\'s not a cigar. Uh... and it\'s not mine. --Hermes'
-        }, {
-          type: 'STRING',
-          value: '7bit'
-        }, {
-          type: 'ATOM',
-          value: '1515'
-        },
+      null,
+      null, {
+        type: 'STRING',
+        value: 'That\'s not a cigar. Uh... and it\'s not mine. --Hermes'
+      }, {
+        type: 'STRING',
+        value: '7bit'
+      }, {
+        type: 'ATOM',
+        value: '1515'
+      },
       [{
         type: 'STRING',
         value: '23 Oct 2003 22:39:17 -0700'
@@ -1432,13 +1432,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -1446,13 +1446,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -1460,13 +1460,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -1480,12 +1480,12 @@ export default {
           }
         ]
       ],
-        null,
-        null,
-        null, {
-          type: 'STRING',
-          value: '<1066973957.4263.59.camel@localhost>'
-        }
+      null,
+      null,
+      null, {
+        type: 'STRING',
+        value: '<1066973957.4263.59.camel@localhost>'
+      }
       ],
       [
         [{
@@ -1502,21 +1502,21 @@ export default {
           type: 'STRING',
           value: 'utf-8'
         }],
-          null,
-          null, {
-            type: 'STRING',
-            value: '8bit'
-          }, {
-            type: 'ATOM',
-            value: '824'
-          }, {
-            type: 'ATOM',
-            value: '22'
-          },
-          null,
-          null,
-          null,
-          null
+        null,
+        null, {
+          type: 'STRING',
+          value: '8bit'
+        }, {
+          type: 'ATOM',
+          value: '824'
+        }, {
+          type: 'ATOM',
+          value: '22'
+        },
+        null,
+        null,
+        null,
+        null
         ],
         [{
           type: 'STRING',
@@ -1538,31 +1538,31 @@ export default {
           type: 'STRING',
           value: 'UTF-8'
         }],
-          null,
-          null, {
-            type: 'STRING',
-            value: '8bit'
-          }, {
-            type: 'ATOM',
-            value: '118'
-          }, {
-            type: 'ATOM',
-            value: '6'
-          },
-          null, [{
-            type: 'STRING',
-            value: 'attachment'
-          },
-          [{
-            type: 'STRING',
-            value: 'filename'
-          }, {
-            type: 'STRING',
-            value: 'htmlfile.html'
-          }]
-          ],
-          null,
-          null
+        null,
+        null, {
+          type: 'STRING',
+          value: '8bit'
+        }, {
+          type: 'ATOM',
+          value: '118'
+        }, {
+          type: 'ATOM',
+          value: '6'
+        },
+        null, [{
+          type: 'STRING',
+          value: 'attachment'
+        },
+        [{
+          type: 'STRING',
+          value: 'filename'
+        }, {
+          type: 'STRING',
+          value: 'htmlfile.html'
+        }]
+        ],
+        null,
+        null
         ], {
           type: 'STRING',
           value: 'mixed'
@@ -1581,14 +1581,14 @@ export default {
         type: 'ATOM',
         value: '49'
       },
-        null, [{
-          type: 'STRING',
-          value: 'inline'
-        },
-          null
-        ],
-        null,
-        null
+      null, [{
+        type: 'STRING',
+        value: 'inline'
+      },
+      null
+      ],
+      null,
+      null
       ],
       [{
         type: 'STRING',
@@ -1597,20 +1597,20 @@ export default {
         type: 'STRING',
         value: 'rfc822'
       },
-        null,
-        null, {
-          type: 'LITERAL',
-          value: 'The spirit is willing, but the flesh is spongy, and\r\n    bruised. --Zap'
-        }, {
-          type: 'ATOM',
-          value: 'p'
-        }, {
-          type: 'STRING',
-          value: '7bit'
-        }, {
-          type: 'ATOM',
-          value: '6643'
-        },
+      null,
+      null, {
+        type: 'LITERAL',
+        value: 'The spirit is willing, but the flesh is spongy, and\r\n    bruised. --Zap'
+      }, {
+        type: 'ATOM',
+        value: 'p'
+      }, {
+        type: 'STRING',
+        value: '7bit'
+      }, {
+        type: 'ATOM',
+        value: '6643'
+      },
       [{
         type: 'STRING',
         value: '23 Oct 2003 22:23:16 -0700'
@@ -1623,13 +1623,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -1637,13 +1637,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -1651,13 +1651,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -1671,12 +1671,12 @@ export default {
           }
         ]
       ],
-        null,
-        null,
-        null, {
-          type: 'STRING',
-          value: '<1066972996.4264.39.camel@localhost>'
-        }
+      null,
+      null,
+      null, {
+        type: 'STRING',
+        value: '<1066972996.4264.39.camel@localhost>'
+      }
       ],
       [
         [
@@ -1696,21 +1696,21 @@ export default {
                 type: 'STRING',
                 value: 'us-ascii'
               }],
-                null,
-                null, {
-                  type: 'STRING',
-                  value: 'quoted-printable'
-                }, {
-                  type: 'ATOM',
-                  value: '1606'
-                }, {
-                  type: 'ATOM',
-                  value: '42'
-                },
-                null,
-                null,
-                null,
-                null
+              null,
+              null, {
+                type: 'STRING',
+                value: 'quoted-printable'
+              }, {
+                type: 'ATOM',
+                value: '1606'
+              }, {
+                type: 'ATOM',
+                value: '42'
+              },
+              null,
+              null,
+              null,
+              null
               ],
               [{
                 type: 'STRING',
@@ -1726,21 +1726,21 @@ export default {
                 type: 'STRING',
                 value: 'utf-8'
               }],
-                null,
-                null, {
-                  type: 'STRING',
-                  value: 'quoted-printable'
-                }, {
-                  type: 'ATOM',
-                  value: '2128'
-                }, {
-                  type: 'ATOM',
-                  value: '54'
-                },
-                null,
-                null,
-                null,
-                null
+              null,
+              null, {
+                type: 'STRING',
+                value: 'quoted-printable'
+              }, {
+                type: 'ATOM',
+                value: '2128'
+              }, {
+                type: 'ATOM',
+                value: '54'
+              },
+              null,
+              null,
+              null,
+              null
               ], {
                 type: 'STRING',
                 value: 'alternative'
@@ -1773,27 +1773,27 @@ export default {
               type: 'STRING',
               value: '<1066971953.4232.15.camel@localhost>'
             },
-              null, {
-                type: 'STRING',
-                value: 'base64'
-              }, {
-                type: 'ATOM',
-                value: '1122'
-              },
-              null, [{
-                type: 'STRING',
-                value: 'attachment'
-              },
-              [{
-                type: 'STRING',
-                value: 'filename'
-              }, {
-                type: 'STRING',
-                value: 'smiley-3.png'
-              }]
-              ],
-              null,
-              null
+            null, {
+              type: 'STRING',
+              value: 'base64'
+            }, {
+              type: 'ATOM',
+              value: '1122'
+            },
+            null, [{
+              type: 'STRING',
+              value: 'attachment'
+            },
+            [{
+              type: 'STRING',
+              value: 'filename'
+            }, {
+              type: 'STRING',
+              value: 'smiley-3.png'
+            }]
+            ],
+            null,
+            null
             ], {
               type: 'STRING',
               value: 'related'
@@ -1829,28 +1829,28 @@ export default {
             type: 'STRING',
             value: 'dot.gif'
           }],
-            null,
-            null, {
-              type: 'STRING',
-              value: 'base64'
-            }, {
-              type: 'ATOM',
-              value: '96'
-            },
-            null, [{
-              type: 'STRING',
-              value: 'attachment'
-            },
-            [{
-              type: 'STRING',
-              value: 'filename'
-            }, {
-              type: 'STRING',
-              value: 'dot.gif'
-            }]
-            ],
-            null,
-            null
+          null,
+          null, {
+            type: 'STRING',
+            value: 'base64'
+          }, {
+            type: 'ATOM',
+            value: '96'
+          },
+          null, [{
+            type: 'STRING',
+            value: 'attachment'
+          },
+          [{
+            type: 'STRING',
+            value: 'filename'
+          }, {
+            type: 'STRING',
+            value: 'dot.gif'
+          }]
+          ],
+          null,
+          null
           ], {
             type: 'STRING',
             value: 'mixed'
@@ -1880,20 +1880,20 @@ export default {
           type: 'STRING',
           value: 'signature.asc'
         }],
-          null, {
-            type: 'STRING',
-            value: 'This is a digitally signed message part'
-          }, {
-            type: 'STRING',
-            value: '7bit'
-          }, {
-            type: 'ATOM',
-            value: '196'
-          },
-          null,
-          null,
-          null,
-          null
+        null, {
+          type: 'STRING',
+          value: 'This is a digitally signed message part'
+        }, {
+          type: 'STRING',
+          value: '7bit'
+        }, {
+          type: 'ATOM',
+          value: '196'
+        },
+        null,
+        null,
+        null,
+        null
         ], {
           type: 'STRING',
           value: 'signed'
@@ -1924,14 +1924,14 @@ export default {
         type: 'ATOM',
         value: '177'
       },
-        null, [{
-          type: 'STRING',
-          value: 'inline'
-        },
-          null
-        ],
-        null,
-        null
+      null, [{
+        type: 'STRING',
+        value: 'inline'
+      },
+      null
+      ],
+      null,
+      null
       ],
       [{
         type: 'STRING',
@@ -1940,17 +1940,17 @@ export default {
         type: 'STRING',
         value: 'rfc822'
       },
-        null,
-        null, {
-          type: 'STRING',
-          value: 'Kittens give Morbo gas. --Morbo'
-        }, {
-          type: 'STRING',
-          value: '7bit'
-        }, {
-          type: 'ATOM',
-          value: '3088'
-        },
+      null,
+      null, {
+        type: 'STRING',
+        value: 'Kittens give Morbo gas. --Morbo'
+      }, {
+        type: 'STRING',
+        value: '7bit'
+      }, {
+        type: 'ATOM',
+        value: '3088'
+      },
       [{
         type: 'STRING',
         value: '23 Oct 2003 22:32:37 -0700'
@@ -1963,13 +1963,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -1977,13 +1977,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -1991,13 +1991,13 @@ export default {
           type: 'STRING',
           value: 'Ryan Finnie'
         },
-          null, {
-            type: 'STRING',
-            value: 'rfinnie'
-          }, {
-            type: 'STRING',
-            value: 'domain.dom'
-          }
+        null, {
+          type: 'STRING',
+          value: 'rfinnie'
+        }, {
+          type: 'STRING',
+          value: 'domain.dom'
+        }
         ]
       ],
       [
@@ -2011,12 +2011,12 @@ export default {
           }
         ]
       ],
-        null,
-        null,
-        null, {
-          type: 'STRING',
-          value: '<1066973557.4265.51.camel@localhost>'
-        }
+      null,
+      null,
+      null, {
+        type: 'STRING',
+        value: '<1066973557.4265.51.camel@localhost>'
+      }
       ],
       [
         [{
@@ -2033,21 +2033,21 @@ export default {
           type: 'STRING',
           value: 'US-ASCII'
         }],
-          null,
-          null, {
-            type: 'STRING',
-            value: '8bit'
-          }, {
-            type: 'ATOM',
-            value: '863'
-          }, {
-            type: 'ATOM',
-            value: '22'
-          },
-          null,
-          null,
-          null,
-          null
+        null,
+        null, {
+          type: 'STRING',
+          value: '8bit'
+        }, {
+          type: 'ATOM',
+          value: '863'
+        }, {
+          type: 'ATOM',
+          value: '22'
+        },
+        null,
+        null,
+        null,
+        null
         ],
         [
           [{
@@ -2064,21 +2064,21 @@ export default {
             type: 'STRING',
             value: 'utf-8'
           }],
-            null,
-            null, {
-              type: 'STRING',
-              value: '8bit'
-            }, {
-              type: 'ATOM',
-              value: '1258'
-            }, {
-              type: 'ATOM',
-              value: '22'
-            },
-            null,
-            null,
-            null,
-            null
+          null,
+          null, {
+            type: 'STRING',
+            value: '8bit'
+          }, {
+            type: 'ATOM',
+            value: '1258'
+          }, {
+            type: 'ATOM',
+            value: '22'
+          },
+          null,
+          null,
+          null,
+          null
           ],
           [{
             type: 'STRING',
@@ -2087,21 +2087,21 @@ export default {
             type: 'STRING',
             value: 'gif'
           },
-            null, {
-              type: 'STRING',
-              value: '<1066973340.4232.46.camel@localhost>'
-            },
-            null, {
-              type: 'STRING',
-              value: 'base64'
-            }, {
-              type: 'ATOM',
-              value: '116'
-            },
-            null,
-            null,
-            null,
-            null
+          null, {
+            type: 'STRING',
+            value: '<1066973340.4232.46.camel@localhost>'
+          },
+          null, {
+            type: 'STRING',
+            value: 'base64'
+          }, {
+            type: 'ATOM',
+            value: '116'
+          },
+          null,
+          null,
+          null,
+          null
           ], {
             type: 'STRING',
             value: 'related'
@@ -2140,14 +2140,14 @@ export default {
         type: 'ATOM',
         value: '79'
       },
-        null, [{
-          type: 'STRING',
-          value: 'inline'
-        },
-          null
-        ],
-        null,
-        null
+      null, [{
+        type: 'STRING',
+        value: 'inline'
+      },
+      null
+      ],
+      null,
+      null
       ], {
         type: 'STRING',
         value: 'mixed'
