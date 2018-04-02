@@ -326,7 +326,7 @@ class TokenParser {
         node.type = 'ATOM'
       }
 
-    // If the node was never closed, throw it
+      // If the node was never closed, throw it
       if (!node.closed) {
         throw new Error('Unexpected end of input at position ' + (this.pos + this.uint8Array.length - 1))
       }
@@ -391,7 +391,7 @@ class TokenParser {
     let i
     let len
     const checkSP = (pos) => {
-    // jump to the next non whitespace pos
+      // jump to the next non whitespace pos
       while (this.uint8Array[i + 1] === ' ') {
         i++
       }
@@ -404,7 +404,7 @@ class TokenParser {
         case 'NORMAL':
 
           switch (chr) {
-          // DQUOTE starts a new string
+            // DQUOTE starts a new string
             case '"':
               this.currentNode = this.createNode(this.currentNode, i)
               this.currentNode.type = 'string'
@@ -412,14 +412,14 @@ class TokenParser {
               this.currentNode.closed = false
               break
 
-          // ( starts a new list
+            // ( starts a new list
             case '(':
               this.currentNode = this.createNode(this.currentNode, i)
               this.currentNode.type = 'LIST'
               this.currentNode.closed = false
               break
 
-          // ) closes a list
+            // ) closes a list
             case ')':
               if (this.currentNode.type !== 'LIST') {
                 throw new Error('Unexpected list terminator ) at position ' + (this.pos + i))
@@ -432,7 +432,7 @@ class TokenParser {
               checkSP()
               break
 
-          // ] closes section group
+            // ] closes section group
             case ']':
               if (this.currentNode.type !== 'SECTION') {
                 throw new Error('Unexpected section terminator ] at position ' + (this.pos + i))
@@ -443,7 +443,7 @@ class TokenParser {
               checkSP()
               break
 
-          // < starts a new partial
+            // < starts a new partial
             case '<':
               if (String.fromCharCode(this.uint8Array[i - 1]) !== ']') {
                 this.currentNode = this.createNode(this.currentNode, i)
@@ -459,7 +459,7 @@ class TokenParser {
               }
               break
 
-          // { starts a new literal
+            // { starts a new literal
             case '{':
               this.currentNode = this.createNode(this.currentNode, i)
               this.currentNode.type = 'LITERAL'
@@ -467,7 +467,7 @@ class TokenParser {
               this.currentNode.closed = false
               break
 
-          // ( starts a new sequence
+            // ( starts a new sequence
             case '*':
               this.currentNode = this.createNode(this.currentNode, i)
               this.currentNode.type = 'SEQUENCE'
@@ -477,14 +477,14 @@ class TokenParser {
               this.state = 'SEQUENCE'
               break
 
-          // normally a space should never occur
+            // normally a space should never occur
             case ' ':
-            // just ignore
+              // just ignore
               break
 
-          // [ starts section
+            // [ starts section
             case '[':
-            // If it is the *first* element after response command, then process as a response argument list
+              // If it is the *first* element after response command, then process as a response argument list
               if (['OK', 'NO', 'BAD', 'BYE', 'PREAUTH'].indexOf(this.parent.command.toUpperCase()) >= 0 && this.currentNode === this.tree) {
                 this.currentNode.endPos = this.pos + i
 
@@ -496,12 +496,12 @@ class TokenParser {
                 this.currentNode.closed = false
                 this.state = 'NORMAL'
 
-              // RFC2221 defines a response code REFERRAL whose payload is an
-              // RFC2192/RFC5092 imapurl that we will try to parse as an ATOM but
-              // fail quite badly at parsing.  Since the imapurl is such a unique
-              // (and crazy) term, we just specialize that case here.
+                // RFC2221 defines a response code REFERRAL whose payload is an
+                // RFC2192/RFC5092 imapurl that we will try to parse as an ATOM but
+                // fail quite badly at parsing.  Since the imapurl is such a unique
+                // (and crazy) term, we just specialize that case here.
                 if (fromCharCode(this.uint8Array.subarray(i + 1, i + 10)).toUpperCase() === 'REFERRAL ') {
-                // create the REFERRAL atom
+                  // create the REFERRAL atom
                   this.currentNode = this.createNode(this.currentNode, this.pos + i + 1)
                   this.currentNode.type = 'ATOM'
                   this.currentNode.endPos = this.pos + i + 8
@@ -510,18 +510,18 @@ class TokenParser {
                   this.currentNode.valueToUpperCase = true
                   this.currentNode = this.currentNode.parentNode
 
-                // eat all the way through the ] to be the  IMAPURL token.
+                  // eat all the way through the ] to be the  IMAPURL token.
                   this.currentNode = this.createNode(this.currentNode, this.pos + i + 10)
-                // just call this an ATOM, even though IMAPURL might be more correct
+                  // just call this an ATOM, even though IMAPURL might be more correct
                   this.currentNode.type = 'ATOM'
-                // jump i to the ']'
+                  // jump i to the ']'
                   i = this.uint8Array.indexOf(ASCII_RIGHT_BRACKET, i + 10)
                   this.currentNode.endPos = this.pos + i - 1
                   this.currentNode.valueStart = this.currentNode.startPos - this.pos
                   this.currentNode.valueEnd = this.currentNode.endPos - this.pos + 1
                   this.currentNode = this.currentNode.parentNode
 
-                // close out the SECTION
+                  // close out the SECTION
                   this.currentNode.closed = true
                   this.currentNode = this.currentNode.parentNode
                   checkSP()
@@ -529,11 +529,11 @@ class TokenParser {
 
                 break
               }
-          /* falls through */
+            /* falls through */
             default:
-            // Any ATOM supported char starts a new Atom sequence, otherwise throw an error
-            // Allow \ as the first char for atom to support system flags
-            // Allow % to support LIST '' %
+              // Any ATOM supported char starts a new Atom sequence, otherwise throw an error
+              // Allow \ as the first char for atom to support system flags
+              // Allow % to support LIST '' %
               if (ATOM_CHAR().indexOf(chr) < 0 && chr !== '\\' && chr !== '%') {
                 throw new Error('Unexpected char at position ' + (this.pos + i))
               }
@@ -549,7 +549,7 @@ class TokenParser {
 
         case 'ATOM':
 
-        // space finishes an atom
+          // space finishes an atom
           if (chr === ' ') {
             this.currentNode.endPos = this.pos + i - 1
             this.currentNode = this.currentNode.parentNode
@@ -557,14 +557,14 @@ class TokenParser {
             break
           }
 
-        //
+          //
           if (
-          this.currentNode.parentNode &&
-          (
-            (chr === ')' && this.currentNode.parentNode.type === 'LIST') ||
-            (chr === ']' && this.currentNode.parentNode.type === 'SECTION')
-          )
-        ) {
+            this.currentNode.parentNode &&
+            (
+              (chr === ')' && this.currentNode.parentNode.type === 'LIST') ||
+              (chr === ']' && this.currentNode.parentNode.type === 'SECTION')
+            )
+          ) {
             this.currentNode.endPos = this.pos + i - 1
             this.currentNode = this.currentNode.parentNode
 
@@ -583,7 +583,7 @@ class TokenParser {
             this.state = 'SEQUENCE'
           }
 
-        // [ starts a section group for this element
+          // [ starts a section group for this element
           if (chr === '[' && (this.currentNode.equals('BODY', false) || this.currentNode.equals('BODY.PEEK', false))) {
             this.currentNode.endPos = this.pos + i
             this.currentNode = this.createNode(this.currentNode.parentNode, this.pos + i)
@@ -597,7 +597,7 @@ class TokenParser {
             throw new Error('Unexpected start of partial at position ' + this.pos)
           }
 
-        // if the char is not ATOM compatible, throw. Allow \* as an exception
+          // if the char is not ATOM compatible, throw. Allow \* as an exception
           if (ATOM_CHAR().indexOf(chr) < 0 && chr !== ']' && !(chr === '*' && this.currentNode.equals('\\'))) {
             throw new Error('Unexpected char at position ' + (this.pos + i))
           } else if (this.currentNode.equals('\\*')) {
@@ -609,7 +609,7 @@ class TokenParser {
 
         case 'STRING':
 
-        // DQUOTE ends the string sequence
+          // DQUOTE ends the string sequence
           if (chr === '"') {
             this.currentNode.endPos = this.pos + i
             this.currentNode.closed = true
@@ -620,7 +620,7 @@ class TokenParser {
             break
           }
 
-        // \ Escapes the following char
+          // \ Escapes the following char
           if (chr === '\\') {
             this.currentNode.valueSkip.push(i - this.currentNode.valueStart)
             i++
@@ -630,11 +630,11 @@ class TokenParser {
             chr = String.fromCharCode(this.uint8Array[i])
           }
 
-        /* // skip this check, otherwise the parser might explode on binary input
-        if (TEXT_CHAR().indexOf(chr) < 0) {
-            throw new Error('Unexpected char at position ' + (this.pos + i));
-        }
-        */
+          /* // skip this check, otherwise the parser might explode on binary input
+          if (TEXT_CHAR().indexOf(chr) < 0) {
+              throw new Error('Unexpected char at position ' + (this.pos + i));
+          }
+          */
 
           this.currentNode.valueEnd = i + 1
           break
@@ -705,8 +705,8 @@ class TokenParser {
             this.currentNode.started = true
 
             if (!this.currentNode.literalLength) {
-            // special case where literal content length is 0
-            // close the node right away, do not wait for additional input
+              // special case where literal content length is 0
+              // close the node right away, do not wait for additional input
               this.currentNode.endPos = this.pos + i
               this.currentNode.closed = true
               this.currentNode = this.currentNode.parentNode
@@ -725,7 +725,7 @@ class TokenParser {
           break
 
         case 'SEQUENCE':
-        // space finishes the sequence set
+          // space finishes the sequence set
           if (chr === ' ') {
             if (!this.currentNode.isDigit(-1) && !this.currentNode.equalsAt('*', -1)) {
               throw new Error('Unexpected whitespace at position ' + (this.pos + i))
@@ -741,8 +741,8 @@ class TokenParser {
             this.state = 'NORMAL'
             break
           } else if (this.currentNode.parentNode &&
-          chr === ']' &&
-          this.currentNode.parentNode.type === 'SECTION') {
+            chr === ']' &&
+            this.currentNode.parentNode.type === 'SECTION') {
             this.currentNode.endPos = this.pos + i - 1
             this.currentNode = this.currentNode.parentNode
 
