@@ -29,6 +29,7 @@ Where
 Where available options are
 
   * **valueAsString** LITERAL and STRING values are returned as strings rather than Uint8Array objects. Defaults to true.
+  * **literalPlus** LITERAL+ allows the alternate form of literals in all IMAP commands (see: https://tools.ietf.org/html/rfc7888#section-4)
 
 The function returns an object in the following form:
 
