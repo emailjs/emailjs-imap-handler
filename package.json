@@ -23,7 +23,7 @@
     "url": "git://github.com/emailjs/emailjs-imap-handler.git"
   },
   "dependencies": {
-    "ramda": "^0.26.1"
+    "ramda": "^0.27.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
