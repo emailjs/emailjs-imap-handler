@@ -6,6 +6,26 @@ import { memoizeWith, identity, without, range } from 'ramda'
 const expandRange = (start, end) => String.fromCharCode.apply(String, range(start, end + 1))
 const excludeChars = (source, exclude) => without(exclude.split(''), source.split('')).join('')
 
+export const ASCII_NL = 10
+export const ASCII_CR = 13
+export const ASCII_SPACE = 32
+export const ASCII_DQUOTE = 34 // "
+export const ASCII_PERCENT_SIGN = 37 // %
+export const ASCII_LEFT_PARENTHESIS = 40 // (
+export const ASCII_RIGHT_PARENTHESIS = 41 // )
+export const ASCII_ASTERISK = 42 // *
+export const ASCII_PLUS = 43 // +
+export const ASCII_COMMA = 44 // ,
+export const ASCII_FULL_STOP = 46 // .
+export const ASCII_COLON = 58 // :
+export const ASCII_LESS_THAN_SIGN = 60 // <
+export const ASCII_GREATER_THAN_SIGN = 62 // >
+export const ASCII_LEFT_BRACKET = 91 // [
+export const ASCII_BACKSLASH = 92 //
+export const ASCII_RIGHT_BRACKET = 93 // ]
+export const ASCII_LEFT_CURLY_BRACKET = 123 // {
+export const ASCII_RIGHT_CURLY_BRACKET = 125 // }
+
 export const CHAR = memoizeWith(identity, () => expandRange(0x01, 0x7F))
 export const CHAR8 = memoizeWith(identity, () => expandRange(0x01, 0xFF))
 export const SP = () => ' '
