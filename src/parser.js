@@ -19,7 +19,7 @@ import {
   ASCII_RIGHT_PARENTHESIS,
   ASCII_SPACE,
   COMMAND,
-  DIGIT,
+  IS_DIGIT,
   IS_ATOM_CHAR,
   TAG,
   verify
@@ -287,8 +287,7 @@ class Node {
       }
     }
 
-    let ascii = this.uint8Array[index]
-    return ascii >= 48 && ascii <= 57
+    return IS_DIGIT(this.uint8Array[index])
   }
 
   containsChar (char) {
@@ -672,9 +671,8 @@ class TokenParser {
             throw new Error('Unexpected partial separator . at position ' + this.pos)
           }
 
-          if (DIGIT().indexOf(chr) < 0 && chr !== ASCII_FULL_STOP) {
-            // TODO
-            // throw new Error('Unexpected char at position ' + (this.pos + i))
+          if (!IS_DIGIT(chr) && chr !== ASCII_FULL_STOP) {
+            throw new Error('Unexpected char at position ' + (this.pos + i))
           }
 
           if (chr !== ASCII_FULL_STOP && (this.currentNode.equals('0') || this.currentNode.equalsAt('.0', -2))) {
@@ -732,9 +730,8 @@ class TokenParser {
             }
             break
           }
-          if (DIGIT().indexOf(chr) < 0) {
-            // TODO
-            // throw new Error('Unexpected char at position ' + (this.pos + i))
+          if (!IS_DIGIT(chr)) {
+            throw new Error('Unexpected char at position ' + (this.pos + i))
           }
           if (this.currentNode.literalLength === '0') {
             throw new Error('Invalid literal at position ' + (this.pos + i))
@@ -788,14 +785,12 @@ class TokenParser {
             if (this.currentNode.equalsAt('*', -1) && !this.currentNode.equalsAt(':', -2)) {
               throw new Error('Unexpected sequence separator , at position ' + (this.pos + i))
             }
-          } else if (!/\d/.test(chr)) {
-            // TODO
-            // throw new Error('Unexpected char at position ' + (this.pos + i))
+          } else if (!IS_DIGIT(chr)) {
+            throw new Error('Unexpected char at position ' + (this.pos + i))
           }
 
-          if (/\d/.test(chr) && this.currentNode.equalsAt('*', -1)) {
-            // TODO
-            // throw new Error('Unexpected number at position ' + (this.pos + i))
+          if (IS_DIGIT(chr) && this.currentNode.equalsAt('*', -1)) {
+            throw new Error('Unexpected number at position ' + (this.pos + i))
           }
 
           this.currentNode.valueEnd = i + 1

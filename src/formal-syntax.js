@@ -40,6 +40,7 @@ export const IS_CTL = (chr) => (chr >= 0x00 && chr <= 0x1F) || chr === 0x7F
 export const IS_LIST_WILDCARDS = (chr) => chr === ASCII_PERCENT_SIGN || chr === ASCII_ASTERISK
 export const IS_QUOTED_SPECIALS = (chr) => chr === ASCII_DQUOTE || chr === ASCII_BACKSLASH
 export const IS_RESP_SPECIALS = (chr) => chr === ASCII_RIGHT_BRACKET
+export const IS_DIGIT = (chr) => chr >= 0x30 && chr <= 0x39
 
 export const CHAR = memoizeWith(identity, () => expandRange(0x01, 0x7F))
 export const CHAR8 = memoizeWith(identity, () => expandRange(0x01, 0xFF))
