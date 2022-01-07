@@ -1,4 +1,7 @@
-import { ATOM_CHAR, verify } from './formal-syntax'
+import {
+  ASCII_BACKSLASH,
+  IS_ATOM_CHAR
+} from './formal-syntax'
 
 /**
  * Compiles an input object into
@@ -82,8 +85,11 @@ export default function (response, asArray, isLogging) {
       case 'SECTION':
         let val = node.value || ''
 
-        if (verify(val.charAt(0) === '\\' ? val.substr(1) : val, ATOM_CHAR()) >= 0) {
-          val = JSON.stringify(val)
+        for (let i = val.charCodeAt(0) === ASCII_BACKSLASH ? 1 : 0; i < val.length; i++) {
+          if (!IS_ATOM_CHAR(val.charCodeAt(i))) {
+            val = JSON.stringify(val)
+            break
+          }
         }
 
         resp += val

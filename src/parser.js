@@ -18,11 +18,10 @@ import {
   ASCII_RIGHT_CURLY_BRACKET,
   ASCII_RIGHT_PARENTHESIS,
   ASCII_SPACE,
-  COMMAND,
+  IS_COMMAND,
   IS_DIGIT,
   IS_ATOM_CHAR,
-  TAG,
-  verify
+  IS_TAG
 } from './formal-syntax'
 
 function fromCharCode (uint8Array) {
@@ -75,14 +74,15 @@ class ParserInstance {
   }
   getTag () {
     if (!this.tag) {
-      this.tag = this.getElement(TAG() + '*+', true)
+      const syntaxChecker = (chr) => IS_TAG(chr) || chr === ASCII_ASTERISK || chr === ASCII_PLUS
+      this.tag = this.getElement(syntaxChecker)
     }
     return this.tag
   }
 
   getCommand () {
     if (!this.command) {
-      this.command = this.getElement(COMMAND())
+      this.command = this.getElement(IS_COMMAND)
     }
 
     switch ((this.command || '').toString().toUpperCase()) {
@@ -105,7 +105,7 @@ class ParserInstance {
     return this.command
   }
 
-  getElement (syntax) {
+  getElement (syntaxChecker) {
     let element
     if (this.remainder[0] === ASCII_SPACE) {
       throw new Error('Unexpected whitespace at position ' + this.pos)
@@ -114,14 +114,15 @@ class ParserInstance {
     let firstSpace = this.remainder.indexOf(ASCII_SPACE)
     if (this.remainder.length > 0 && firstSpace !== 0) {
       if (firstSpace === -1) {
-        element = fromCharCode(this.remainder)
+        element = this.remainder
       } else {
-        element = fromCharCode(this.remainder.subarray(0, firstSpace))
+        element = this.remainder.subarray(0, firstSpace)
       }
 
-      const errPos = verify(element, syntax)
-      if (errPos >= 0) {
-        throw new Error('Unexpected char at position ' + (this.pos + errPos))
+      for (let i = 0; i < element.length; i++) {
+        if (!syntaxChecker(element[i])) {
+          throw new Error('Unexpected char at position ' + (this.pos + i))
+        }
       }
     } else {
       throw new Error('Unexpected end of input at position ' + this.pos)
@@ -130,7 +131,7 @@ class ParserInstance {
     this.pos += element.length
     this.remainder = this.remainder.subarray(element.length)
 
-    return element
+    return fromCharCode(element)
   }
 
   getSpace () {
@@ -810,7 +811,7 @@ export default function (buffers, options = {}) {
 
   if (['UID', 'AUTHENTICATE'].indexOf((response.command || '').toUpperCase()) >= 0) {
     parser.getSpace()
-    response.command += ' ' + parser.getElement(COMMAND())
+    response.command += ' ' + parser.getElement(IS_COMMAND)
   }
 
   if (!isEmpty(parser.remainder)) {
