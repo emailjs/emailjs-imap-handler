@@ -20,7 +20,7 @@ import {
   ASCII_SPACE,
   COMMAND,
   DIGIT,
-  ATOM_CHAR,
+  IS_ATOM_CHAR,
   TAG,
   verify
 } from './formal-syntax'
@@ -550,9 +550,8 @@ class TokenParser {
               // Any ATOM supported char starts a new Atom sequence, otherwise throw an error
               // Allow \ as the first char for atom to support system flags
               // Allow % to support LIST '' %
-              if (ATOM_CHAR().indexOf(chr) < 0 && chr !== ASCII_BACKSLASH && chr !== ASCII_PERCENT_SIGN) {
-                // TODO
-                // throw new Error('Unexpected char at position ' + (this.pos + i))
+              if (!IS_ATOM_CHAR(chr) && chr !== ASCII_BACKSLASH && chr !== ASCII_PERCENT_SIGN) {
+                throw new Error('Unexpected char at position ' + (this.pos + i))
               }
 
               this.currentNode = this.createNode(this.currentNode, i)
@@ -615,12 +614,10 @@ class TokenParser {
           }
 
           // if the char is not ATOM compatible, throw. Allow \* as an exception
-          if (ATOM_CHAR().indexOf(chr) < 0 && chr !== ASCII_RIGHT_BRACKET && !(chr === ASCII_ASTERISK && this.currentNode.equals('\\'))) {
-            // TODO
-            // throw new Error('Unexpected char at position ' + (this.pos + i))
+          if (!IS_ATOM_CHAR(chr) && chr !== ASCII_RIGHT_BRACKET && !(chr === ASCII_ASTERISK && this.currentNode.equals('\\'))) {
+            throw new Error('Unexpected char at position ' + (this.pos + i))
           } else if (this.currentNode.equals('\\*')) {
-            // TODO
-            // throw new Error('Unexpected char at position ' + (this.pos + i))
+            throw new Error('Unexpected char at position ' + (this.pos + i))
           }
 
           this.currentNode.valueEnd = i + 1
