@@ -1,13 +1,28 @@
 import {
-  SP, DIGIT, ATOM_CHAR,
-  TAG, COMMAND, verify
+  ASCII_ASTERISK,
+  ASCII_BACKSLASH,
+  ASCII_COLON,
+  ASCII_COMMA,
+  ASCII_CR,
+  ASCII_DQUOTE,
+  ASCII_FULL_STOP,
+  ASCII_GREATER_THAN_SIGN,
+  ASCII_LEFT_BRACKET,
+  ASCII_LEFT_CURLY_BRACKET,
+  ASCII_LEFT_PARENTHESIS,
+  ASCII_LESS_THAN_SIGN,
+  ASCII_NL,
+  ASCII_PERCENT_SIGN,
+  ASCII_PLUS,
+  ASCII_RIGHT_BRACKET,
+  ASCII_RIGHT_CURLY_BRACKET,
+  ASCII_RIGHT_PARENTHESIS,
+  ASCII_SPACE,
+  IS_COMMAND,
+  IS_DIGIT,
+  IS_ATOM_CHAR,
+  IS_TAG
 } from './formal-syntax'
-
-let ASCII_NL = 10
-let ASCII_CR = 13
-let ASCII_SPACE = 32
-let ASCII_LEFT_BRACKET = 91
-let ASCII_RIGHT_BRACKET = 93
 
 function fromCharCode (uint8Array) {
   const batchSize = 10240
@@ -59,14 +74,15 @@ class ParserInstance {
   }
   getTag () {
     if (!this.tag) {
-      this.tag = this.getElement(TAG() + '*+', true)
+      const syntaxChecker = (chr) => IS_TAG(chr) || chr === ASCII_ASTERISK || chr === ASCII_PLUS
+      this.tag = this.getElement(syntaxChecker)
     }
     return this.tag
   }
 
   getCommand () {
     if (!this.command) {
-      this.command = this.getElement(COMMAND())
+      this.command = this.getElement(IS_COMMAND)
     }
 
     switch ((this.command || '').toString().toUpperCase()) {
@@ -89,7 +105,7 @@ class ParserInstance {
     return this.command
   }
 
-  getElement (syntax) {
+  getElement (syntaxChecker) {
     let element
     if (this.remainder[0] === ASCII_SPACE) {
       throw new Error('Unexpected whitespace at position ' + this.pos)
@@ -98,14 +114,15 @@ class ParserInstance {
     let firstSpace = this.remainder.indexOf(ASCII_SPACE)
     if (this.remainder.length > 0 && firstSpace !== 0) {
       if (firstSpace === -1) {
-        element = fromCharCode(this.remainder)
+        element = this.remainder
       } else {
-        element = fromCharCode(this.remainder.subarray(0, firstSpace))
+        element = this.remainder.subarray(0, firstSpace)
       }
 
-      const errPos = verify(element, syntax)
-      if (errPos >= 0) {
-        throw new Error('Unexpected char at position ' + (this.pos + errPos))
+      for (let i = 0; i < element.length; i++) {
+        if (!syntaxChecker(element[i])) {
+          throw new Error('Unexpected char at position ' + (this.pos + i))
+        }
       }
     } else {
       throw new Error('Unexpected end of input at position ' + this.pos)
@@ -114,7 +131,7 @@ class ParserInstance {
     this.pos += element.length
     this.remainder = this.remainder.subarray(element.length)
 
-    return element
+    return fromCharCode(element)
   }
 
   getSpace () {
@@ -122,7 +139,7 @@ class ParserInstance {
       throw new Error('Unexpected end of input at position ' + this.pos)
     }
 
-    if (verify(String.fromCharCode(this.remainder[0]), SP()) >= 0) {
+    if (this.remainder[0] !== ASCII_SPACE) {
       throw new Error('Unexpected char at position ' + this.pos)
     }
 
@@ -271,8 +288,7 @@ class Node {
       }
     }
 
-    let ascii = this.uint8Array[index]
-    return ascii >= 48 && ascii <= 57
+    return IS_DIGIT(this.uint8Array[index])
   }
 
   containsChar (char) {
@@ -392,20 +408,20 @@ class TokenParser {
     let len
     const checkSP = (pos) => {
       // jump to the next non whitespace pos
-      while (this.uint8Array[i + 1] === ' ') {
+      while (this.uint8Array[i + 1] === ASCII_SPACE) {
         i++
       }
     }
 
     for (i = 0, len = this.uint8Array.length; i < len; i++) {
-      let chr = String.fromCharCode(this.uint8Array[i])
+      let chr = this.uint8Array[i]
 
       switch (this.state) {
         case 'NORMAL':
 
           switch (chr) {
             // DQUOTE starts a new string
-            case '"':
+            case ASCII_DQUOTE:
               this.currentNode = this.createNode(this.currentNode, i)
               this.currentNode.type = 'string'
               this.state = 'STRING'
@@ -413,14 +429,14 @@ class TokenParser {
               break
 
             // ( starts a new list
-            case '(':
+            case ASCII_LEFT_PARENTHESIS:
               this.currentNode = this.createNode(this.currentNode, i)
               this.currentNode.type = 'LIST'
               this.currentNode.closed = false
               break
 
             // ) closes a list
-            case ')':
+            case ASCII_RIGHT_PARENTHESIS:
               if (this.currentNode.type !== 'LIST') {
                 throw new Error('Unexpected list terminator ) at position ' + (this.pos + i))
               }
@@ -433,7 +449,7 @@ class TokenParser {
               break
 
             // ] closes section group
-            case ']':
+            case ASCII_RIGHT_BRACKET:
               if (this.currentNode.type !== 'SECTION') {
                 throw new Error('Unexpected section terminator ] at position ' + (this.pos + i))
               }
@@ -444,8 +460,8 @@ class TokenParser {
               break
 
             // < starts a new partial
-            case '<':
-              if (String.fromCharCode(this.uint8Array[i - 1]) !== ']') {
+            case ASCII_LESS_THAN_SIGN:
+              if (this.uint8Array[i - 1] !== ASCII_RIGHT_BRACKET) {
                 this.currentNode = this.createNode(this.currentNode, i)
                 this.currentNode.type = 'ATOM'
                 this.currentNode.valueStart = i
@@ -460,7 +476,7 @@ class TokenParser {
               break
 
             // { starts a new literal
-            case '{':
+            case ASCII_LEFT_CURLY_BRACKET:
               this.currentNode = this.createNode(this.currentNode, i)
               this.currentNode.type = 'LITERAL'
               this.state = 'LITERAL'
@@ -468,7 +484,7 @@ class TokenParser {
               break
 
             // ( starts a new sequence
-            case '*':
+            case ASCII_ASTERISK:
               this.currentNode = this.createNode(this.currentNode, i)
               this.currentNode.type = 'SEQUENCE'
               this.currentNode.valueStart = i
@@ -478,12 +494,12 @@ class TokenParser {
               break
 
             // normally a space should never occur
-            case ' ':
+            case ASCII_SPACE:
               // just ignore
               break
 
             // [ starts section
-            case '[':
+            case ASCII_LEFT_BRACKET:
               // If it is the *first* element after response command, then process as a response argument list
               if (['OK', 'NO', 'BAD', 'BYE', 'PREAUTH'].indexOf(this.parent.command.toUpperCase()) >= 0 && this.currentNode === this.tree) {
                 this.currentNode.endPos = this.pos + i
@@ -534,7 +550,7 @@ class TokenParser {
               // Any ATOM supported char starts a new Atom sequence, otherwise throw an error
               // Allow \ as the first char for atom to support system flags
               // Allow % to support LIST '' %
-              if (ATOM_CHAR().indexOf(chr) < 0 && chr !== '\\' && chr !== '%') {
+              if (!IS_ATOM_CHAR(chr) && chr !== ASCII_BACKSLASH && chr !== ASCII_PERCENT_SIGN) {
                 throw new Error('Unexpected char at position ' + (this.pos + i))
               }
 
@@ -550,7 +566,7 @@ class TokenParser {
         case 'ATOM':
 
           // space finishes an atom
-          if (chr === ' ') {
+          if (chr === ASCII_SPACE) {
             this.currentNode.endPos = this.pos + i - 1
             this.currentNode = this.currentNode.parentNode
             this.state = 'NORMAL'
@@ -561,8 +577,8 @@ class TokenParser {
           if (
             this.currentNode.parentNode &&
             (
-              (chr === ')' && this.currentNode.parentNode.type === 'LIST') ||
-              (chr === ']' && this.currentNode.parentNode.type === 'SECTION')
+              (chr === ASCII_RIGHT_PARENTHESIS && this.currentNode.parentNode.type === 'LIST') ||
+              (chr === ASCII_RIGHT_BRACKET && this.currentNode.parentNode.type === 'SECTION')
             )
           ) {
             this.currentNode.endPos = this.pos + i - 1
@@ -577,14 +593,14 @@ class TokenParser {
             break
           }
 
-          if ((chr === ',' || chr === ':') && this.currentNode.isNumber()) {
+          if ((chr === ASCII_COMMA || chr === ASCII_COLON) && this.currentNode.isNumber()) {
             this.currentNode.type = 'SEQUENCE'
             this.currentNode.closed = true
             this.state = 'SEQUENCE'
           }
 
           // [ starts a section group for this element
-          if (chr === '[' && (this.currentNode.equals('BODY', false) || this.currentNode.equals('BODY.PEEK', false))) {
+          if (chr === ASCII_LEFT_BRACKET && (this.currentNode.equals('BODY', false) || this.currentNode.equals('BODY.PEEK', false))) {
             this.currentNode.endPos = this.pos + i
             this.currentNode = this.createNode(this.currentNode.parentNode, this.pos + i)
             this.currentNode.type = 'SECTION'
@@ -593,12 +609,12 @@ class TokenParser {
             break
           }
 
-          if (chr === '<') {
+          if (chr === ASCII_LESS_THAN_SIGN) {
             throw new Error('Unexpected start of partial at position ' + this.pos)
           }
 
           // if the char is not ATOM compatible, throw. Allow \* as an exception
-          if (ATOM_CHAR().indexOf(chr) < 0 && chr !== ']' && !(chr === '*' && this.currentNode.equals('\\'))) {
+          if (!IS_ATOM_CHAR(chr) && chr !== ASCII_RIGHT_BRACKET && !(chr === ASCII_ASTERISK && this.currentNode.equals('\\'))) {
             throw new Error('Unexpected char at position ' + (this.pos + i))
           } else if (this.currentNode.equals('\\*')) {
             throw new Error('Unexpected char at position ' + (this.pos + i))
@@ -610,7 +626,7 @@ class TokenParser {
         case 'STRING':
 
           // DQUOTE ends the string sequence
-          if (chr === '"') {
+          if (chr === ASCII_DQUOTE) {
             this.currentNode.endPos = this.pos + i
             this.currentNode.closed = true
             this.currentNode = this.currentNode.parentNode
@@ -621,13 +637,13 @@ class TokenParser {
           }
 
           // \ Escapes the following char
-          if (chr === '\\') {
+          if (chr === ASCII_BACKSLASH) {
             this.currentNode.valueSkip.push(i - this.currentNode.valueStart)
             i++
             if (i >= len) {
               throw new Error('Unexpected end of input at position ' + (this.pos + i))
             }
-            chr = String.fromCharCode(this.uint8Array[i])
+            chr = this.uint8Array[i]
           }
 
           /* // skip this check, otherwise the parser might explode on binary input
@@ -640,7 +656,7 @@ class TokenParser {
           break
 
         case 'PARTIAL':
-          if (chr === '>') {
+          if (chr === ASCII_GREATER_THAN_SIGN) {
             if (this.currentNode.equalsAt('.', -1)) {
               throw new Error('Unexpected end of partial at position ' + this.pos)
             }
@@ -652,15 +668,15 @@ class TokenParser {
             break
           }
 
-          if (chr === '.' && (!this.currentNode.getValueLength() || this.currentNode.containsChar('.'))) {
+          if (chr === ASCII_FULL_STOP && (!this.currentNode.getValueLength() || this.currentNode.containsChar('.'))) {
             throw new Error('Unexpected partial separator . at position ' + this.pos)
           }
 
-          if (DIGIT().indexOf(chr) < 0 && chr !== '.') {
+          if (!IS_DIGIT(chr) && chr !== ASCII_FULL_STOP) {
             throw new Error('Unexpected char at position ' + (this.pos + i))
           }
 
-          if (chr !== '.' && (this.currentNode.equals('0') || this.currentNode.equalsAt('.0', -2))) {
+          if (chr !== ASCII_FULL_STOP && (this.currentNode.equals('0') || this.currentNode.equalsAt('.0', -2))) {
             throw new Error('Invalid partial at position ' + (this.pos + i))
           }
 
@@ -669,7 +685,7 @@ class TokenParser {
 
         case 'LITERAL':
           if (this.currentNode.started) {
-            if (chr === '\u0000') {
+            if (chr === 0) {
               throw new Error('Unexpected \\x00 at position ' + (this.pos + i))
             }
             this.currentNode.valueEnd = i + 1
@@ -684,12 +700,12 @@ class TokenParser {
             break
           }
 
-          if (chr === '+' && this.options.literalPlus) {
+          if (chr === ASCII_PLUS && this.options.literalPlus) {
             this.currentNode.literalPlus = true
             break
           }
 
-          if (chr === '}') {
+          if (chr === ASCII_RIGHT_CURLY_BRACKET) {
             if (!('literalLength' in this.currentNode)) {
               throw new Error('Unexpected literal prefix end char } at position ' + (this.pos + i))
             }
@@ -715,18 +731,18 @@ class TokenParser {
             }
             break
           }
-          if (DIGIT().indexOf(chr) < 0) {
+          if (!IS_DIGIT(chr)) {
             throw new Error('Unexpected char at position ' + (this.pos + i))
           }
           if (this.currentNode.literalLength === '0') {
             throw new Error('Invalid literal at position ' + (this.pos + i))
           }
-          this.currentNode.literalLength = (this.currentNode.literalLength || '') + chr
+          this.currentNode.literalLength = (this.currentNode.literalLength || '') + String.fromCharCode(chr)
           break
 
         case 'SEQUENCE':
           // space finishes the sequence set
-          if (chr === ' ') {
+          if (chr === ASCII_SPACE) {
             if (!this.currentNode.isDigit(-1) && !this.currentNode.equalsAt('*', -1)) {
               throw new Error('Unexpected whitespace at position ' + (this.pos + i))
             }
@@ -741,7 +757,7 @@ class TokenParser {
             this.state = 'NORMAL'
             break
           } else if (this.currentNode.parentNode &&
-            chr === ']' &&
+            chr === ASCII_RIGHT_BRACKET &&
             this.currentNode.parentNode.type === 'SECTION') {
             this.currentNode.endPos = this.pos + i - 1
             this.currentNode = this.currentNode.parentNode
@@ -755,26 +771,26 @@ class TokenParser {
             break
           }
 
-          if (chr === ':') {
+          if (chr === ASCII_COLON) {
             if (!this.currentNode.isDigit(-1) && !this.currentNode.equalsAt('*', -1)) {
               throw new Error('Unexpected range separator : at position ' + (this.pos + i))
             }
-          } else if (chr === '*') {
+          } else if (chr === ASCII_ASTERISK) {
             if (!this.currentNode.equalsAt(',', -1) && !this.currentNode.equalsAt(':', -1)) {
               throw new Error('Unexpected range wildcard at position ' + (this.pos + i))
             }
-          } else if (chr === ',') {
+          } else if (chr === ASCII_COMMA) {
             if (!this.currentNode.isDigit(-1) && !this.currentNode.equalsAt('*', -1)) {
               throw new Error('Unexpected sequence separator , at position ' + (this.pos + i))
             }
             if (this.currentNode.equalsAt('*', -1) && !this.currentNode.equalsAt(':', -2)) {
               throw new Error('Unexpected sequence separator , at position ' + (this.pos + i))
             }
-          } else if (!/\d/.test(chr)) {
+          } else if (!IS_DIGIT(chr)) {
             throw new Error('Unexpected char at position ' + (this.pos + i))
           }
 
-          if (/\d/.test(chr) && this.currentNode.equalsAt('*', -1)) {
+          if (IS_DIGIT(chr) && this.currentNode.equalsAt('*', -1)) {
             throw new Error('Unexpected number at position ' + (this.pos + i))
           }
 
@@ -795,7 +811,7 @@ export default function (buffers, options = {}) {
 
   if (['UID', 'AUTHENTICATE'].indexOf((response.command || '').toUpperCase()) >= 0) {
     parser.getSpace()
-    response.command += ' ' + parser.getElement(COMMAND())
+    response.command += ' ' + parser.getElement(IS_COMMAND)
   }
 
   if (!isEmpty(parser.remainder)) {
