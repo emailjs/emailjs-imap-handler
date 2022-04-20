@@ -20,6 +20,7 @@ export const ASCII_BACKSLASH = 92 //
 export const ASCII_RIGHT_BRACKET = 93 // ]
 export const ASCII_LEFT_CURLY_BRACKET = 123 // {
 export const ASCII_RIGHT_CURLY_BRACKET = 125 // }
+export const ASCII_TILDE = 126 // ~
 
 export const IS_CHAR = (chr) => chr >= 0x01 && chr <= 0x7F
 export const IS_ATOM_CHAR = (chr) => IS_CHAR(chr) && !IS_ATOM_SPECIALS(chr)

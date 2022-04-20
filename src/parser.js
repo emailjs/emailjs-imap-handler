@@ -18,6 +18,7 @@ import {
   ASCII_RIGHT_CURLY_BRACKET,
   ASCII_RIGHT_PARENTHESIS,
   ASCII_SPACE,
+  ASCII_TILDE,
   IS_COMMAND,
   IS_DIGIT,
   IS_ATOM_CHAR,
@@ -498,6 +499,10 @@ class TokenParser {
               // just ignore
               break
 
+            // start of a literal8, handle in case ASCII_LEFT_CURLY_BRACKET
+            case ASCII_TILDE:
+              break
+
             // [ starts section
             case ASCII_LEFT_BRACKET:
               // If it is the *first* element after response command, then process as a response argument list
@@ -685,9 +690,6 @@ class TokenParser {
 
         case 'LITERAL':
           if (this.currentNode.started) {
-            if (chr === 0) {
-              throw new Error('Unexpected \\x00 at position ' + (this.pos + i))
-            }
             this.currentNode.valueEnd = i + 1
 
             if (this.currentNode.getValueLength() >= this.currentNode.literalLength) {
@@ -700,7 +702,8 @@ class TokenParser {
             break
           }
 
-          if (chr === ASCII_PLUS && this.options.literalPlus) {
+          if (chr === ASCII_PLUS) {
+            // assuming capability LITERAL+ or LITERAL-
             this.currentNode.literalPlus = true
             break
           }

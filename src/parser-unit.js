@@ -342,6 +342,12 @@ describe('IMAP Command Parser', function () {
     })
   })
 
+  // From: https://tools.ietf.org/html/rfc7888
+  //   literal = "{" number ["+"] "}" CRLF *CHAR8
+  //   ; Number represents the number of CHAR8 octets
+  // From: https://tools.ietf.org/html/rfc3501
+  //   CHAR8 = %x01-ff
+  //             ; any OCTET except NUL, %x00
   describe('get literal', function () {
     it('should succeed', function () {
       expect(parser(str2arr('TAG1 CMD {4}\r\nabcd')).attributes).to.deep.equal([{
@@ -366,6 +372,25 @@ describe('IMAP Command Parser', function () {
           value: 'kere'
         }]
       ])
+
+      expect(parser(str2arr('TAG1 CMD {4}\r\n\x01bcd')).attributes).to.deep.equal([{
+        type: 'LITERAL',
+        value: '\x01bcd'
+      }])
+
+      expect(parser(str2arr('TAG1 CMD {4+}\r\nabcd')).attributes).to.deep.equal([{
+        type: 'LITERAL',
+        value: 'abcd'
+      }])
+
+      // NUL character is nonstandard, it should be only by allowed with
+      // literal8 syntax. Gmail has a bug where it servers 8-bit attachments as
+      // literal, not litarl8. The reason may be that the mime-part incorrectly
+      // says transfer encoding is base64. Relax parsing and allow NUL
+      // character in literal.
+      expect(function () {
+        parser(str2arr('TAG1 CMD {4}\r\n\x00bcd'))
+      }).to.not.throw(Error)
     })
 
     it('should fail', function () {
@@ -394,6 +419,32 @@ describe('IMAP Command Parser', function () {
       expect(literal.value[1]).to.equal(98)
       expect(literal.value[2]).to.equal(99)
       expect(literal.value[3]).to.equal(100)
+    })
+  })
+
+  // From: https://tools.ietf.org/html/rfc4466
+  // literal8 = "~{" number ["+"] "}" CRLF *OCTET
+  //             ;; A string that might contain NULs.
+  //             ;; <number> represents the number of OCTETs
+  //             ;; in the response string.
+  //             ;; The "+" is only allowed when both LITERAL+ and
+  //             ;; BINARY extensions are supported by the server.
+  describe('get literal8', function () {
+    it('should succeed', function () {
+      expect(parser(str2arr('TAG1 CMD ~{4}\r\nabcd')).attributes).to.deep.equal([{
+        type: 'LITERAL',
+        value: 'abcd'
+      }])
+
+      expect(parser(str2arr('TAG1 CMD ~{4}\r\n\x00bcd')).attributes).to.deep.equal([{
+        type: 'LITERAL',
+        value: '\x00bcd'
+      }])
+
+      expect(parser(str2arr('TAG1 CMD ~{4+}\r\nabcd')).attributes).to.deep.equal([{
+        type: 'LITERAL',
+        value: 'abcd'
+      }])
     })
   })
 
