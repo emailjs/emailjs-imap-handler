@@ -661,7 +661,7 @@ describe('IMAP Command Parser', function () {
       // PERMANENTFLAGS is from RFC3501.  Its syntax is also very
       // similar to BADCHARSET, except BADCHARSET has astrings
       // inside the list.
-      expect(parser(str2arr('* OK [PERMANENTFLAGS (de:hacking $label kt-evalution [css3-page] \\*)] Flags permitted.'))).to.deep.equal({
+      expect(parser(str2arr('* OK [PERMANENTFLAGS (de:hacking $label kt-evalution [css3-page \\*)] Flags permitted.'))).to.deep.equal({
         tag: '*',
         command: 'OK',
         attributes: [{
@@ -682,7 +682,7 @@ describe('IMAP Command Parser', function () {
             value: 'kt-evalution'
           }, {
             type: 'ATOM',
-            value: '[css3-page]'
+            value: '[css3-page'
           }, {
             type: 'ATOM',
             value: '\\*'
@@ -748,6 +748,30 @@ describe('IMAP Command Parser', function () {
           value: 'Conditional STORE failed'
         }]
       })
+    })
+
+    it('should succeed 12', function () {
+      expect(parser(str2arr('* NO [UNAVAILABLE] Temporary authentication failure. [imap.foo.com:2025-07-29 10:17:47]'))).to.deep.equal({
+        tag: '*',
+        command: 'NO',
+        attributes: [{
+          type: 'ATOM',
+          value: '',
+          section: [{
+            type: 'ATOM',
+            value: 'UNAVAILABLE'
+          }]
+        }, {
+          type: 'TEXT',
+          value: 'Temporary authentication failure. [imap.foo.com:2025-07-29 10:17:47]'
+        }]
+      })
+    })
+
+    it('should fail', function () {
+      expect(function () {
+        parser(str2arr('TAG1 NO [UNAVAI'))
+      }).to.throw(Error)
     })
   })
 

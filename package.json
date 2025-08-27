@@ -12,11 +12,11 @@
   "license": "MIT",
   "scripts": {
     "build": "./scripts/build.sh",
-    "lint": "$(npm bin)/standard",
+    "lint": "npx standard",
     "preversion": "npm run build",
     "test": "npm run lint && npm run unit",
-    "unit": "$(npm bin)/mocha './src/*-unit.js' --reporter spec --require babel-register testutils.js",
-    "test-watch": "$(npm bin)/mocha './src/*-unit.js' --reporter spec --require babel-register testutils.js --watch"
+    "unit": "npx mocha './src/*-unit.js' --reporter spec --require babel-register testutils.js",
+    "test-watch": "npx mocha './src/*-unit.js' --reporter spec --require babel-register testutils.js --watch"
   },
   "repository": {
     "type": "git",

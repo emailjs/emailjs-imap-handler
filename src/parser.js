@@ -92,10 +92,14 @@ class ParserInstance {
       case 'BAD':
       case 'PREAUTH':
       case 'BYE':
-        let lastRightBracket = this.remainder.lastIndexOf(ASCII_RIGHT_BRACKET)
-        if (this.remainder[1] === ASCII_LEFT_BRACKET && lastRightBracket > 1) {
-          this.humanReadable = fromCharCodeTrimmed(this.remainder.subarray(lastRightBracket + 1))
-          this.remainder = this.remainder.subarray(0, lastRightBracket + 1)
+        if (this.remainder[1] === ASCII_LEFT_BRACKET) {
+          let rightBracket = this.remainder.indexOf(ASCII_RIGHT_BRACKET)
+          if (rightBracket > 1) {
+            this.humanReadable = fromCharCodeTrimmed(this.remainder.subarray(rightBracket + 1))
+            this.remainder = this.remainder.subarray(0, rightBracket + 1)
+          } else {
+            throw new Error('Unexpected end of input at position ' + (this.pos + this.remainder.length))
+          }
         } else {
           this.humanReadable = fromCharCodeTrimmed(this.remainder)
           this.remainder = new Uint8Array(0)
