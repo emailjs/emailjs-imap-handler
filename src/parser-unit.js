@@ -768,6 +768,156 @@ describe('IMAP Command Parser', function () {
       })
     })
 
+    // Gmail does not adhere to the formal syntax of an imap response.
+    // See RFC9501.
+    // [GMail]/PayPal is an example of a 'flag' that can appear in
+    // PERMANENTFLAGS from Gmail respone.
+    // The syntax does not allow "]" inside a flag. So this is a Gmail bug.
+    // This fix makes it so that we can handle those replies from Gmail.
+    // Note that we add some brackets to the text field at the end to make
+    // sure that those are not erroneously used when matching the opening
+    // bracket of PERMANENTFLAGS.
+    // In real life the text at the end would say "Flags permitted."
+    it('should succeed 13', function () {
+      expect(parser(str2arr('* OK [PERMANENTFLAGS (\\Answered \\Flagged \\Draft \\Deleted \\Seen $Forwarded $Junk $Label1 $NotJunk $NotPhishing $Phishing Junk NonJunk [GMail]/PayPal \\*)] Flags [...] permitted.[]'))).to.deep.equal({
+        tag: '*',
+        command: 'OK',
+        attributes: [{
+          section: [{
+            type: 'ATOM',
+            value: 'PERMANENTFLAGS'
+          },
+          [
+            {
+              type: 'ATOM',
+              value: '\\Answered'
+            },
+            {
+              type: 'ATOM',
+              value: '\\Flagged'
+            },
+            {
+              type: 'ATOM',
+              value: '\\Draft'
+            },
+            {
+              type: 'ATOM',
+              value: '\\Deleted'
+            },
+            {
+              type: 'ATOM',
+              value: '\\Seen'
+            },
+            {
+              type: 'ATOM',
+              value: '$Forwarded'
+            },
+            {
+              type: 'ATOM',
+              value: '$Junk'
+            },
+            {
+              type: 'ATOM',
+              value: '$Label1'
+            },
+            {
+              type: 'ATOM',
+              value: '$NotJunk'
+            },
+            {
+              type: 'ATOM',
+              value: '$NotPhishing'
+            },
+            {
+              type: 'ATOM',
+              value: '$Phishing'
+            },
+            {
+              type: 'ATOM',
+              value: 'Junk'
+            },
+            {
+              type: 'ATOM',
+              value: 'NonJunk'
+            },
+            {
+              type: 'ATOM',
+              value: '[GMail]/PayPal'
+            },
+            {
+              type: 'ATOM',
+              value: '\\*'
+            }
+          ]],
+          type: 'ATOM',
+          value: ''
+        },
+        {
+          type: 'TEXT',
+          value: 'Flags [...] permitted.[]'
+        }] })
+    })
+
+    // More variations of brackets in flags and text to cover the logic of the
+    // findRightBracket function
+    it('should succeed 14', function () {
+      // Supported
+      expect(parser(str2arr('* OK [PERMANENTFLAGS (\\*)]')).command).to.equal('OK')
+      expect(parser(str2arr('* OK [PERMANENTFLAGS (\\*)] Text')).command).to.equal('OK')
+      expect(parser(str2arr('* OK [PERMANENTFLAGS ()] Text ending in []')).command).to.equal('OK')
+      expect(parser(str2arr('* OK [PERMANENTFLAGS ([flag)] Flag starts with [')).command).to.equal('OK')
+      expect(parser(str2arr('* OK [PERMANENTFLAGS (fl]ag)] Flag includes ]')).command).to.equal('OK')
+      expect(parser(str2arr('* OK [PERMANENTFLAGS (flag)] No ] in flags but is here')).command).to.equal('OK')
+      expect(parser(str2arr('* OK [PERMANENTFLAGS (fl[ag)] Flag includes ['))).to.deep.equal({
+        tag: '*',
+        command: 'OK',
+        attributes: [{
+          type: 'ATOM',
+          value: '',
+          section: [{
+            type: 'ATOM',
+            value: 'PERMANENTFLAGS'
+          },
+          [
+            {
+              type: 'ATOM',
+              value: 'fl[ag'
+            }
+          ]]
+        }, {
+          type: 'TEXT',
+          value: 'Flag includes ['
+        }]
+      })
+      expect(parser(str2arr('* OK [PERMANENTFLAGS (fl]ag)] Flag includes ]'))).to.deep.equal({
+        tag: '*',
+        command: 'OK',
+        attributes: [{
+          type: 'ATOM',
+          value: '',
+          section: [{
+            type: 'ATOM',
+            value: 'PERMANENTFLAGS'
+          },
+          [
+            {
+              type: 'ATOM',
+              value: 'fl]ag'
+            }
+          ]]
+        }, {
+          type: 'TEXT',
+          value: 'Flag includes ]'
+        }]
+      })
+
+      // Not supported
+      expect(function () {
+        // Note the space following the first ] indicating end of flags array
+        parser(str2arr('* OK [PERMANENTFLAGS (flag] \\*)] Flag ends with ] '))
+      }).to.throw(Error)
+    })
+
     it('should fail', function () {
       expect(function () {
         parser(str2arr('TAG1 NO [UNAVAI'))

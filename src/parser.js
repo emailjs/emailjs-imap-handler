@@ -67,6 +67,19 @@ function isEmpty (uint8Array) {
   return true
 }
 
+function findRightBracket (uint8Array, index) {
+  while (true) {
+    index = uint8Array.indexOf(ASCII_RIGHT_BRACKET, index)
+    if (index === -1) {
+      return -1
+    }
+    if (index + 1 === uint8Array.length || uint8Array[index + 1] === ASCII_SPACE) {
+      return index
+    }
+    index++
+  }
+}
+
 class ParserInstance {
   constructor (input, options) {
     this.remainder = new Uint8Array(input || 0)
@@ -93,7 +106,7 @@ class ParserInstance {
       case 'PREAUTH':
       case 'BYE':
         if (this.remainder[1] === ASCII_LEFT_BRACKET) {
-          let rightBracket = this.remainder.indexOf(ASCII_RIGHT_BRACKET)
+          let rightBracket = findRightBracket(this.remainder, 2)
           if (rightBracket > 1) {
             this.humanReadable = fromCharCodeTrimmed(this.remainder.subarray(rightBracket + 1))
             this.remainder = this.remainder.subarray(0, rightBracket + 1)
